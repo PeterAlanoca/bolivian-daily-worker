@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>dotnet-BolivianDailyWorker-027c07b7-8bbc-4579-ad6f-f6a5d3d5f2fc</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="HtmlAgilityPack" Version="1.12.4" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.5" />
+    <PackageReference Include="Npgsql" Version="10.0.2" />
+    <PackageReference Include="Selenium.WebDriver" Version="4.41.0" />
+    <PackageReference Include="WebDriverManager" Version="2.17.7" />
+  </ItemGroup>
+</Project>
