@@ -73,7 +73,9 @@ public class ElDeberScraperService : BaseScraperService
             DateTime? publicationDate = null;
             if (DateTime.TryParse(timeStr, out var parsedDate))
             {
-                publicationDate = parsedDate;
+                publicationDate = parsedDate.Kind == DateTimeKind.Unspecified
+                    ? DateTime.SpecifyKind(parsedDate, DateTimeKind.Utc)
+                    : parsedDate.ToUniversalTime();
             }
             else
             {

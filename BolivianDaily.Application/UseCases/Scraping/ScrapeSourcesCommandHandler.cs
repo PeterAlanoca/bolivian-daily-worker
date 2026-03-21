@@ -61,8 +61,7 @@ public class ScrapeSourcesCommandHandler : IRequestHandler<ScrapeSourcesCommand,
                         {
                             newsArticle.CategoryId = sourceCategory.CategoryId;
                             newsArticle.SourceId = sourceItem.Id;
-
-                           // await _newsRepository.AddAsync(newsArticle, cancellationToken);
+                            await _newsRepository.AddAsync(newsArticle, cancellationToken);
                             //await _apiClient.SubmitNewsAsync(newsArticle, cancellationToken);
 
                             //_logger.LogInformation("Successfully processed article: {Title}", newsArticle.Title);

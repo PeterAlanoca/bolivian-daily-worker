@@ -96,11 +96,7 @@ CREATE TRIGGER update_news_modtime BEFORE UPDATE ON news FOR EACH ROW EXECUTE PR
 CREATE TRIGGER update_multimedia_modtime BEFORE UPDATE ON multimedia FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
 
 
-
-
-
-
-
+---------------------------------
 
 
 INSERT INTO category (name, url, state) VALUES 
@@ -115,40 +111,41 @@ INSERT INTO category (name, url, state) VALUES
 ('SALUD', 'salud', 'A'),
 ('INTERESANTE', 'interesante', 'A');
 
-
--- 4. Seeding inicial de ejemplo
 INSERT INTO source (name, alias, url, state)
 VALUES ('Jornada', 'jornada', 'https://jornada.com.bo/', 'A')
 ON CONFLICT DO NOTHING;
 
 
-INSERT INTO public.source_category(
-	source_id, 
-	category_id,
-	name, 
-	url, 
-	state
-) VALUES (
-	1, 
-	1, 
-	'BOLIVIA', 
-	'https://jornada.com.bo/seccion/bolivia/',
-	'A'
-);
+INSERT INTO public.source_category(source_id, category_id, name, url, state)
+VALUES (1, 1, 'BOLIVIA', 'https://jornada.com.bo/seccion/bolivia/', 'A');
+
+INSERT INTO public.source_category(source_id, category_id, name, url, state) 
+VALUES (1, 2, 'ECONOMÍA', 'https://jornada.com.bo/seccion/economia/', 'A');
+
+INSERT INTO public.source_category(source_id, category_id, name, url, state) 
+VALUES (1, 3, 'MUNDO', 'https://jornada.com.bo/seccion/mundo/', 'A');
+
+INSERT INTO public.source_category(source_id, category_id, name, url, state) 
+VALUES (1, 8, 'DEPORTES', 'https://jornada.com.bo/seccion/deportes/', 'A');
+
+INSERT INTO public.source_category(source_id, category_id, name, url, state) 
+VALUES (1, 10, 'GENTE', 'https://jornada.com.bo/seccion/gente/', 'A');
+
+INSERT INTO public.source_category(source_id, category_id, name, url, state) 
+VALUES (1, 9, 'SALUD', 'https://jornada.com.bo/seccion/salud/', 'A');
+
+INSERT INTO public.source_category(source_id, category_id, name, url, state) 
+VALUES (1, 7, 'TECNOLOGÍA', 'https://jornada.com.bo/seccion/tecnologia/', 'A');
+
+INSERT INTO public.source_category(source_id, category_id, name, url, state) 
+VALUES (1, 7, 'TECNOLOGÍA', 'https://jornada.com.bo/seccion/tecnologia/', 'A');
 
 
-INSERT INTO public.source_category(
-	source_id, 
-	category_id,
-	name, 
-	url, 
-	state
-) VALUES (
-	1, 
-	2, 
-	'ECONOMÍA', 
-	'https://jornada.com.bo/seccion/economia/',
-	'A'
-);
+
+
+
+
+
+
 
 

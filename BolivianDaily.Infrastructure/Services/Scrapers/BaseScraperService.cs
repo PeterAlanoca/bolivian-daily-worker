@@ -82,7 +82,10 @@ public abstract class BaseScraperService : IWebScraperService
         var dateStr = metaNode?.GetAttributeValue("content", string.Empty);
         if (DateTime.TryParse(dateStr, out var result))
         {
-            return result;
+            // Ensure result is UTC
+            return result.Kind == DateTimeKind.Unspecified 
+                ? DateTime.SpecifyKind(result, DateTimeKind.Utc) 
+                : result.ToUniversalTime();
         }
 
         return DateTime.UtcNow;

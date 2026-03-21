@@ -106,6 +106,7 @@ public class JornadaScraperService : BaseScraperService
             }
 
             newsArticle.Multimedia = ExtractMultimedia(document, ImageSelector);
+            newsArticle.State = "A";
 
             Logger.LogInformation("[Jornada] Scraped article: {Title}", newsArticle.Title);
             return newsArticle;
@@ -142,6 +143,7 @@ public class JornadaScraperService : BaseScraperService
                     Type = GetMimeType(src),
                     Url = src,
                     Description = caption,
+                    State = "A",
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow
                 });
