@@ -17,8 +17,8 @@ public class ScraperFactory : IScraperFactory
     {
         _scrapers = new Dictionary<string, IWebScraperService>(StringComparer.OrdinalIgnoreCase)
         {
-            { "jornada_news", jornadaScraper },
-            { "el_deber",     elDeberScraper }
+            { "jornada", jornadaScraper },
+            { "el_deber", elDeberScraper }
         };
     }
 
