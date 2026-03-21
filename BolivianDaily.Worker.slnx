@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="BolivianDaily.Application/BolivianDaily.Application.csproj" Id="bd2a3332-6ee9-4b48-81bf-7e4c0b85aad9" />
+  <Project Path="BolivianDaily.Domain/BolivianDaily.Domain.csproj" Id="5abb3f86-55e0-4a73-b655-7955f7c677d4" />
+  <Project Path="BolivianDaily.Infrastructure/BolivianDaily.Infrastructure.csproj" Id="81330c20-1230-438f-84d9-6f7139778a99" />
+  <Project Path="BolivianDaily.Worker/BolivianDaily.Worker.csproj" />
+</Solution>
