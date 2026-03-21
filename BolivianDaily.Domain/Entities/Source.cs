@@ -5,7 +5,7 @@ namespace BolivianDaily.Domain.Entities;
 public class Source : AuditableEntity
 {
     [JsonPropertyName("id")]
-    public int Id { get; set; }
+    public long Id { get; set; }
 
     [JsonPropertyName("name")]
     public string? Name { get; set; }

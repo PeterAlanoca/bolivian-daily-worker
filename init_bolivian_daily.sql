@@ -13,7 +13,7 @@
 
 -- ── category ────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS category (
-    id SERIAL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     name VARCHAR(100),
     url VARCHAR(100),
     state VARCHAR(1),
@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS category (
 
 -- ── source ──────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS source (
-    id SERIAL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     name VARCHAR(100),
     alias VARCHAR(100),
     url VARCHAR(100),
@@ -34,9 +34,9 @@ CREATE TABLE IF NOT EXISTS source (
 
 -- ── source_category ─────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS source_category (
-    id SERIAL PRIMARY KEY,
-    source_id INT NOT NULL,
-    category_id INT NOT NULL,
+    id BIGSERIAL PRIMARY KEY,
+    source_id BIGINT NOT NULL,
+    category_id BIGINT NOT NULL,
     name VARCHAR(100),
     url VARCHAR(100),
     state VARCHAR(1),
@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS source_category (
 -- ── news ────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS news (
     id BIGSERIAL PRIMARY KEY,
-    category_id INT,
+    category_id BIGINT,
     source_id BIGINT,
     url TEXT,
     pretitle TEXT,
@@ -95,15 +95,60 @@ CREATE TRIGGER update_source_category_modtime BEFORE UPDATE ON source_category F
 CREATE TRIGGER update_news_modtime BEFORE UPDATE ON news FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
 CREATE TRIGGER update_multimedia_modtime BEFORE UPDATE ON multimedia FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
 
+
+
+
+
+
+
+
+
+INSERT INTO category (name, url, state) VALUES 
+('NACIONAL', 'nacional', 'A'),
+('ECONOMÍA', 'economia', 'A'),
+('INTERNACIONAL', 'internacional', 'A'),
+('SEGURIDAD', 'seguridad', 'A'),
+('SOCIEDAD', 'sociedad', 'A'),
+('CULTURA', 'cultura', 'A'),
+('TECNOLOGÍA', 'tecnologia', 'A'),
+('DEPORTES', 'deportes', 'A'),
+('SALUD', 'salud', 'A'),
+('INTERESANTE', 'interesante', 'A');
+
+
 -- 4. Seeding inicial de ejemplo
 INSERT INTO source (name, alias, url, state)
-VALUES ('Jornada', 'jornada_news', 'https://jornada.com.bo/', 'A')
+VALUES ('Jornada', 'jornada', 'https://jornada.com.bo/', 'A')
 ON CONFLICT DO NOTHING;
 
-INSERT INTO category (name, url, state)
-VALUES ('Nacional', 'https://jornada.com.bo/categoria/nacional', 'A')
-ON CONFLICT DO NOTHING;
 
-INSERT INTO source_category (source_id, category_id, name, url, state)
-VALUES (1, 1, 'Jornada - Nacional', 'https://jornada.com.bo/categoria/nacional', 'A')
-ON CONFLICT DO NOTHING;
+INSERT INTO public.source_category(
+	source_id, 
+	category_id,
+	name, 
+	url, 
+	state
+) VALUES (
+	1, 
+	1, 
+	'BOLIVIA', 
+	'https://jornada.com.bo/seccion/bolivia/',
+	'A'
+);
+
+
+INSERT INTO public.source_category(
+	source_id, 
+	category_id,
+	name, 
+	url, 
+	state
+) VALUES (
+	1, 
+	2, 
+	'ECONOMÍA', 
+	'https://jornada.com.bo/seccion/economia/',
+	'A'
+);
+
+

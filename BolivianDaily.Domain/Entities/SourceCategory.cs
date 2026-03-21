@@ -5,13 +5,13 @@ namespace BolivianDaily.Domain.Entities;
 public class SourceCategory : AuditableEntity
 {
     [JsonPropertyName("id")]
-    public int Id { get; set; }
+    public long Id { get; set; }
 
     [JsonPropertyName("source_id")]
-    public int SourceId { get; set; }
+    public long SourceId { get; set; }
 
     [JsonPropertyName("category_id")]
-    public int CategoryId { get; set; }
+    public long CategoryId { get; set; }
 
     [JsonPropertyName("name")]
     public string? Name { get; set; }

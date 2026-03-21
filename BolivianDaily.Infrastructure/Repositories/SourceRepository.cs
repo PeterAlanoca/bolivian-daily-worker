@@ -14,7 +14,7 @@ public class SourceRepository : ISourceRepository
         _context = context;
     }
 
-    public async Task<Source?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
+    public async Task<Source?> GetByIdAsync(long id, CancellationToken cancellationToken = default)
     {
         return await _context.Sources
             .Include(s => s.Categories)
@@ -24,10 +24,10 @@ public class SourceRepository : ISourceRepository
 
     public async Task<IEnumerable<Source>> GetAllActiveAsync(CancellationToken cancellationToken = default)
     {
-        // By default returning all, assuming all retrieved are active or we can add IsActive flag.
         return await _context.Sources
-            .Include(s => s.Categories)
-            .ThenInclude(sc => sc.Category)
+            .Where(s => s.State == "A")
+            .Include(s => s.Categories.Where(sc => sc.State == "A" && sc.Category.State == "A"))
+                .ThenInclude(sc => sc.Category)
             .ToListAsync(cancellationToken);
     }
 }

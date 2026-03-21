@@ -8,7 +8,7 @@ public class News : AuditableEntity
     public long Id { get; set; }
 
     [JsonPropertyName("category_id")]
-    public int? CategoryId { get; set; }
+    public long? CategoryId { get; set; }
 
     [JsonPropertyName("source_id")]
     public long? SourceId { get; set; }
