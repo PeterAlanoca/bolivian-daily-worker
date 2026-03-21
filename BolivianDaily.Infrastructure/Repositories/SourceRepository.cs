@@ -26,7 +26,7 @@ public class SourceRepository : ISourceRepository
     {
         return await _context.Sources
             .Where(s => s.State == "A")
-            .Include(s => s.Categories.Where(sc => sc.State == "A" && sc.Category.State == "A"))
+            .Include(s => s.Categories.Where(sc => sc.State == "A" && sc.Category!.State == "A"))
                 .ThenInclude(sc => sc.Category)
             .ToListAsync(cancellationToken);
     }

@@ -24,13 +24,13 @@ public class ElDeberScraperService : BaseScraperService
     {
     }
 
-    public override async Task<List<string>> GetLatestArticleUrlsAsync(Source source, Category category, CancellationToken cancellationToken = default)
+    public override async Task<List<string>> GetLatestArticleUrlsAsync(SourceCategory sourceCategory, CancellationToken cancellationToken = default)
     {
         var urls = new List<string>();
 
-        if (string.IsNullOrEmpty(category.Url)) return urls;
+        if (string.IsNullOrEmpty(sourceCategory.Url)) return urls;
 
-        var document = await FetchDocumentAsync(category.Url, cancellationToken);
+        var document = await FetchDocumentAsync(sourceCategory.Url, cancellationToken);
         if (document == null) return urls;
 
         // El Deber uses <article> tags wrapping each news card
@@ -45,15 +45,15 @@ public class ElDeberScraperService : BaseScraperService
             // El Deber articles typically have paths like /economia/noticia-xxx
             if (!href.Contains("/noticia") && !href.Contains("/articulo")) continue;
 
-            var fullUrl = BuildFullUrl(href, source.Url);
+            var fullUrl = BuildFullUrl(href, sourceCategory.Source?.Url ?? string.Empty);
             if (!urls.Contains(fullUrl)) urls.Add(fullUrl);
         }
 
-        Logger.LogInformation("[ElDeber] Found {Count} article URLs in category '{Category}'", urls.Count, category.Name);
+        Logger.LogInformation("[ElDeber] Found {Count} article URLs in category '{Category}'", urls.Count, sourceCategory.Category?.Name);
         return urls;
     }
 
-    public override async Task<News?> ScrapeArticleAsync(Source source, string articleUrl, CancellationToken cancellationToken = default)
+    public override async Task<News?> ScrapeArticleAsync(string articleUrl, CancellationToken cancellationToken = default)
     {
         var document = await FetchDocumentAsync(articleUrl, cancellationToken);
         if (document == null) return null;

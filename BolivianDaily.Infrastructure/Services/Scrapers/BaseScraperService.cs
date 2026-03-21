@@ -20,8 +20,8 @@ public abstract class BaseScraperService : IWebScraperService
         Logger = logger;
     }
 
-    public abstract Task<List<string>> GetLatestArticleUrlsAsync(Source source, Category category, CancellationToken cancellationToken = default);
-    public abstract Task<News?> ScrapeArticleAsync(Source source, string articleUrl, CancellationToken cancellationToken = default);
+    public abstract Task<List<string>> GetLatestArticleUrlsAsync(SourceCategory sourceCategory, CancellationToken cancellationToken = default);
+    public abstract Task<News?> ScrapeArticleAsync(string articleUrl, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Downloads and parses an HTML page into an HtmlDocument.
@@ -44,8 +44,9 @@ public abstract class BaseScraperService : IWebScraperService
 
     /// <summary>
     /// Extracts and normalizes image URLs from img nodes, populating the Multimedia list.
+    /// Default implementation takes up to 5 images from the provided XPath.
     /// </summary>
-    protected List<Multimedia> ExtractMultimedia(HtmlDocument document, string imgXPath)
+    protected virtual List<Multimedia> ExtractMultimedia(HtmlDocument document, string imgXPath)
     {
         var mediaList = new List<Multimedia>();
         var imgNodes = document.DocumentNode.SelectNodes(imgXPath);

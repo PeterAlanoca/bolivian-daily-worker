@@ -16,14 +16,14 @@ public class HtmlAgilityPackScraperService : IWebScraperService
         _logger = logger;
     }
 
-    public async Task<List<string>> GetLatestArticleUrlsAsync(Source source, Category category, CancellationToken cancellationToken = default)
+    public async Task<List<string>> GetLatestArticleUrlsAsync(SourceCategory sourceCategory, CancellationToken cancellationToken = default)
     {
         var urls = new List<string>();
         try
         {
-            if (string.IsNullOrEmpty(category.Url)) return urls;
+            if (string.IsNullOrEmpty(sourceCategory.Url)) return urls;
 
-            var html = await _httpClient.GetStringAsync(category.Url, cancellationToken);
+            var html = await _httpClient.GetStringAsync(sourceCategory.Url, cancellationToken);
             var htmlDocument = new HtmlDocument();
             htmlDocument.LoadHtml(html);
 
@@ -36,7 +36,7 @@ public class HtmlAgilityPackScraperService : IWebScraperService
                     var href = node.GetAttributeValue("href", string.Empty);
                     if (href.Contains("noticia") || href.Length > 40)
                     {
-                        var fullUrl = href.StartsWith("http") ? href : $"{source.Url.TrimEnd('/')}/{href.TrimStart('/')}";
+                        var fullUrl = href.StartsWith("http") ? href : $"{sourceCategory.Source!.Url!.TrimEnd('/')}/{href.TrimStart('/')}";
                         if (!urls.Contains(fullUrl)) urls.Add(fullUrl);
                     }
                 }
@@ -44,13 +44,13 @@ public class HtmlAgilityPackScraperService : IWebScraperService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Failed to fetch article URLs from {category.Url}");
+            _logger.LogError(ex, $"Failed to fetch article URLs from {sourceCategory.Url}");
         }
 
         return urls;
     }
 
-    public async Task<News?> ScrapeArticleAsync(Source source, string articleUrl, CancellationToken cancellationToken = default)
+    public async Task<News?> ScrapeArticleAsync(string articleUrl, CancellationToken cancellationToken = default)
     {
         try
         {

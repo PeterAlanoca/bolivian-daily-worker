@@ -46,11 +46,8 @@ public class ScrapeSourcesCommandHandler : IRequestHandler<ScrapeSourcesCommand,
 
             foreach (var sourceCategory in sourceItem.Categories)
             {
-                var categoryItem = sourceCategory.Category;
-                if (categoryItem == null) continue;
-
-                var articleUrls = await scraper.GetLatestArticleUrlsAsync(sourceItem, categoryItem, cancellationToken);
-                _logger.LogInformation("Found {Count} articles for category '{Category}'", articleUrls.Count, categoryItem.Name);
+                var articleUrls = await scraper.GetLatestArticleUrlsAsync(sourceCategory, cancellationToken);
+                _logger.LogInformation("Found {Count} articles for category '{Category}'", articleUrls.Count, sourceCategory.Category?.Name);
 
                 foreach (var url in articleUrls)
                 {
@@ -59,16 +56,16 @@ public class ScrapeSourcesCommandHandler : IRequestHandler<ScrapeSourcesCommand,
 
                     try
                     {
-                        var newsArticle = await scraper.ScrapeArticleAsync(sourceItem, url, cancellationToken);
+                        var newsArticle = await scraper.ScrapeArticleAsync(url, cancellationToken);
                         if (newsArticle != null)
                         {
-                            newsArticle.CategoryId = categoryItem.Id;
+                            newsArticle.CategoryId = sourceCategory.CategoryId;
                             newsArticle.SourceId = sourceItem.Id;
 
-                            await _newsRepository.AddAsync(newsArticle, cancellationToken);
-                            await _apiClient.SubmitNewsAsync(newsArticle, cancellationToken);
+                           // await _newsRepository.AddAsync(newsArticle, cancellationToken);
+                            //await _apiClient.SubmitNewsAsync(newsArticle, cancellationToken);
 
-                            _logger.LogInformation("Successfully processed article: {Title}", newsArticle.Title);
+                            //_logger.LogInformation("Successfully processed article: {Title}", newsArticle.Title);
                         }
                     }
                     catch (Exception ex)
