@@ -9,6 +9,8 @@ using BolivianDaily.Infrastructure.Repositories;
 using BolivianDaily.Application.Interfaces;
 using BolivianDaily.Infrastructure.Services;
 using BolivianDaily.Infrastructure.Services.Scrapers;
+using BolivianDaily.Infrastructure.ExternalServices.BolivianDaily;
+using BolivianDaily.Infrastructure.ExternalServices.DeepSeek;
 
 public static class ServiceCollectionExtensions
 {
@@ -33,8 +35,9 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<ScraperFactory>();
         services.AddSingleton<IScraperFactory>(sp => sp.GetRequiredService<ScraperFactory>());
 
-        // External API client
-        services.AddHttpClient<IExternalNewsApiClient, ExternalNewsApiClient>();
+        // External Integrations (Gateways)
+        services.AddHttpClient<INewsPublisher, BolivianDailyPublisher>();
+        services.AddHttpClient<INewsContentAnalyst, DeepSeekContentAnalyst>();
 
         return services;
     }
