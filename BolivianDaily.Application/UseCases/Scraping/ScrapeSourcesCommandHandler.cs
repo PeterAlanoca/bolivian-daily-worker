@@ -11,7 +11,8 @@ public class ScrapeSourcesCommandHandler : IRequestHandler<ScrapeSourcesCommand,
     private readonly ISourceRepository _sourceRepository;
     private readonly INewsRepository _newsRepository;
     private readonly IScraperFactory _scraperFactory;
-    private readonly IExternalNewsApiClient _apiClient;
+    private readonly INewsPublisher _newsPublisher;
+    private readonly INewsContentAnalyst _newsAnalyst;
     private readonly IConfiguration _configuration;
     private readonly ILogger<ScrapeSourcesCommandHandler> _logger;
 
@@ -19,14 +20,16 @@ public class ScrapeSourcesCommandHandler : IRequestHandler<ScrapeSourcesCommand,
         ISourceRepository sourceRepository,
         INewsRepository newsRepository,
         IScraperFactory scraperFactory,
-        IExternalNewsApiClient apiClient,
+        INewsPublisher newsPublisher,
+        INewsContentAnalyst newsAnalyst,
         IConfiguration configuration,
         ILogger<ScrapeSourcesCommandHandler> logger)
     {
         _sourceRepository = sourceRepository;
         _newsRepository = newsRepository;
         _scraperFactory = scraperFactory;
-        _apiClient = apiClient;
+        _newsPublisher = newsPublisher;
+        _newsAnalyst = newsAnalyst;
         _configuration = configuration;
         _logger = logger;
     }
@@ -64,11 +67,25 @@ public class ScrapeSourcesCommandHandler : IRequestHandler<ScrapeSourcesCommand,
                         var newsArticle = await scraper.ScrapeArticleAsync(url, cancellationToken);
                         if (newsArticle != null)
                         {
+                            // 1. AI Content Analysis
+                            var analystResult = await _newsAnalyst.AnalyzeAsync(newsArticle, sourceCategory.Category?.Name ?? "General", cancellationToken);
+                            
+                            if (!analystResult.IsValid)
+                            {
+                                _logger.LogWarning("Article at {Url} failed AI analyst. Confidence: {Confidence}. Issues: {Issues}", 
+                                    url, analystResult.Confidence, string.Join(", ", analystResult.Issues));
+                                continue;
+                            }
+
+                            var aiStatus = analystResult.IsEnabled ? "[AI: ENABLED]" : "[AI: DISABLED - DEFAULT PASS]";
+                            _logger.LogInformation("Article at {Url} passed analysis {Status} (Confidence: {Confidence})", 
+                                url, aiStatus, analystResult.Confidence);
+
                             newsArticle.CategoryId = sourceCategory.CategoryId;
                             newsArticle.SourceId = sourceItem.Id;
 
                             await _newsRepository.AddAsync(newsArticle, cancellationToken);
-                            await _apiClient.SubmitNewsAsync(newsArticle, cancellationToken);
+                            await _newsPublisher.PublishAsync(newsArticle, cancellationToken);
 
                             _logger.LogInformation("Successfully processed article: {Title}", newsArticle.Title);
 

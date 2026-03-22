@@ -1,8 +1,8 @@
 using System.Text.Json.Serialization;
 
-namespace BolivianDaily.Infrastructure.ExternalApi.Dtos;
+namespace BolivianDaily.Infrastructure.ExternalServices.BolivianDaily.Dtos;
 
-public class NewsSubmissionDto
+public class BolivianDailyNewsDto
 {
     [JsonPropertyName("category_id")]
     public long? CategoryId { get; set; }
@@ -38,10 +38,10 @@ public class NewsSubmissionDto
     public string State { get; set; } = "A";
 
     [JsonPropertyName("multimedia")]
-    public List<MultimediaSubmissionDto> Multimedia { get; set; } = new();
+    public List<BolivianDailyMultimediaDto> Multimedia { get; set; } = new();
 }
 
-public class MultimediaSubmissionDto
+public class BolivianDailyMultimediaDto
 {
     [JsonPropertyName("url")]
     public string? Url { get; set; }
