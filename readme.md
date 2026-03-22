@@ -18,6 +18,39 @@ El servicio sigue estrictamente los principios de Clean Architecture y DDD (Doma
 
 ---
 
+## Estructura del Proyecto
+
+El sistema está diseñado bajo una arquitectura de **limpia (Clean Architecture)** con una clara separación entre las reglas de negocio y los detalles externos:
+
+### 1. BolivianDaily.Domain (Core/Entidades)
+Representa el corazón del sistema. No tiene dependencias externas (proyectos o paquetes de terceros).
+- **Entities/**: Define los objetos de dominio persistentes como `News`, `Source`, `Category`, `Multimedia`, `SourceCategory` y la base abstracta `AuditableEntity`.
+- **Repositories/**: Define los contratos de acceso a datos (`INewsRepository`, `ISourceRepository`, `ICategoryRepository`) que la capa de infraestructura deberá implementar.
+
+### 2. BolivianDaily.Application (Capas de Casos de Uso)
+Coordina la ejecución de la lógica de negocio y define las interfaces para servicios externos.
+- **UseCases/**: Implementa la orquestación mediante **MediatR**. El comando `ScrapeSourcesCommand` y su controlador `ScrapeSourcesCommandHandler` coordinan el flujo de raspado, validación con IA y persistencia.
+- **Interfaces/**: Define los contratos para la infraestructura: `IWebScraperService` (para leer portales), `INewsContentAnalyst` (analítica de IA), `INewsPublisher` (publicación externa) e `IScraperFactory`.
+- **Dtos/**: Objetos de transferencia de datos como `NewsAnalysisResult`, utilizados para recibir el análisis de la IA.
+
+### 3. BolivianDaily.Infrastructure (Adaptadores/Implementaciones)
+Contiene todos los detalles técnicos y de infraestructura que conectan el sistema con el mundo real.
+- **Data (EF Core)**: El `ApplicationDbContext` y las configuraciones de mapeo de base de datos a PostgreSQL.
+- **Repositories/**: Implementaciones concretas de los repositorios del dominio utilizando Entity Framework.
+- **ExternalServices/**:
+  - **BolivianDaily API**: Integración con el backend principal para publicar noticias.
+  - **DeepSeek IA**: Analista de contenido basado en modelos de lenguaje (LLM).
+- **Services/Scrapers/**: Lógica específica para extraer noticias de portales bolivianos (`JornadaScraperService`, `ElDeberScraperService`), heredando de un `BaseScraperService` común.
+- **ScraperFactory**: Clase encargada de resolver dinámicamente qué scraper utilizar según la fuente configurada.
+
+### 4. BolivianDaily.Worker (Entorno de Ejecución)
+Capa de presentación de tipo servicio de consola para ejecución en segundo plano.
+- **ScraperWorker.cs**: El `BackgroundService` de .NET que ejecuta el proceso periódicamente (cada 15 minutos por defecto).
+- **appsettings.json**: Configuración centralizada de cadenas de conexión, claves API y parámetros de IA.
+- **Program.cs**: Bootstrapper que configura el Host y la inyección de dependencias de todas las capas.
+
+---
+
 ## Stack Tecnológico
 - **Lenguaje**: C# (.NET 10)
 - **Base de Datos**: PostgreSQL
