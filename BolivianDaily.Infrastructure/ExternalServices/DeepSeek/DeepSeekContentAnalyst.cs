@@ -35,17 +35,17 @@ public class DeepSeekContentAnalyst : INewsContentAnalyst
 
         if (string.IsNullOrEmpty(_apiKey) && _enabled)
         {
-            _logger.LogWarning("DeepSeek API Key is missing in configuration.");
+            _logger.LogWarning("Falta la clave del API de DeepSeek en la configuración.");
         }
 
-        _logger.LogInformation("DeepSeek Content Analyst initialized. Status: {Status}", _enabled ? "ENABLED" : "DISABLED (USING DEFAULT PASS)");
+        _logger.LogInformation("Analista de Contenido DeepSeek inicializado. Estado: {Status}", _enabled ? "HABILITADO" : "DESHABILITADO (USANDO PASE POR DEFECTO)");
     }
 
     public async Task<NewsAnalysisResult> AnalyzeAsync(News news, string categoryName, CancellationToken cancellationToken = default)
     {
         if (!_enabled)
         {
-            _logger.LogInformation("DeepSeek analysis is disabled. Skipping validation for article: {Title}", news.Title);
+            _logger.LogInformation("El análisis de DeepSeek está deshabilitado. Saltando validación para el artículo: {Title}", news.Title);
             return new NewsAnalysisResult 
             { 
                 IsValid = true, 
@@ -67,7 +67,7 @@ public class DeepSeekContentAnalyst : INewsContentAnalyst
             };
             httpRequest.Headers.Add("Authorization", $"Bearer {_apiKey}");
 
-            _logger.LogInformation("Requesting AI content analysis for article: {Title}", news.Title);
+            _logger.LogInformation("Solicitando análisis de contenido por IA para el artículo: {Title}", news.Title);
             var response = await _httpClient.SendAsync(httpRequest, cancellationToken);
             response.EnsureSuccessStatusCode();
 
@@ -78,11 +78,11 @@ public class DeepSeekContentAnalyst : INewsContentAnalyst
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error analyzing news content with DeepSeek AI.");
+            _logger.LogError(ex, "Error al analizar el contenido de la noticia con la IA de DeepSeek.");
             return new NewsAnalysisResult 
             { 
                 IsValid = false, 
-                Issues = new List<string> { $"Exception during AI analysis: {ex.Message}" } 
+                Issues = new List<string> { $"Excepción durante el análisis de IA: {ex.Message}" } 
             };
         }
     }

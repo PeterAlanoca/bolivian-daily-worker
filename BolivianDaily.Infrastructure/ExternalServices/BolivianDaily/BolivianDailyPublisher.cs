@@ -43,22 +43,22 @@ public class BolivianDailyPublisher : INewsPublisher
             var jsonContent = JsonSerializer.Serialize(dto, options);
             var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
-            _logger.LogInformation("Publishing News '{Title}' to BolivianDaily API...", news.Title);
+            _logger.LogInformation("Publicando noticia '{Title}' en el API de BolivianDaily...", news.Title);
             var response = await _httpClient.PostAsync(_apiUrl, content, cancellationToken);
             
             if (response.IsSuccessStatusCode || response.StatusCode == System.Net.HttpStatusCode.Created)
             {
-                _logger.LogInformation("Successfully published news to BolivianDaily.");
+                _logger.LogInformation("Noticia publicada exitosamente en BolivianDaily.");
                 return true;
             }
 
             var errorBody = await response.Content.ReadAsStringAsync(cancellationToken);
-            _logger.LogWarning("Failed to publish news. Status: {StatusCode}, Error: {Error}", response.StatusCode, errorBody);
+            _logger.LogWarning("Fallo al publicar la noticia. Estado: {StatusCode}, Error: {Error}", response.StatusCode, errorBody);
             return false;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error occurred while publishing news to BolivianDaily.");
+            _logger.LogError(ex, "Ocurrió un error al publicar la noticia en BolivianDaily.");
             return false;
         }
     }

@@ -5,6 +5,7 @@ using BolivianDaily.Application.Interfaces;
 using BolivianDaily.Domain.Repositories;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
+using Spectre.Console;
 
 public class ScrapeSourcesCommandHandler : IRequestHandler<ScrapeSourcesCommand, bool>
 {
@@ -34,73 +35,96 @@ public class ScrapeSourcesCommandHandler : IRequestHandler<ScrapeSourcesCommand,
         _logger = logger;
     }
 
+    private void LogRich(string message, string color = "white")
+    {
+        var timestamp = $"[silver][[{DateTime.Now:yyyy-MM-dd HH:mm:ss}]][/]";
+        AnsiConsole.MarkupLine($"{timestamp} [{color}]{Markup.Escape(message)}[/]");
+    }
+
     public async Task<bool> Handle(ScrapeSourcesCommand request, CancellationToken cancellationToken)
     {
         var submitNewsDelay = _configuration.GetValue<int>("ScrapingOptions:DelayBetweenArticlesMs", 1000);
 
-        _logger.LogInformation("Starting scraping process...");
+        LogRich("INICIANDO PROCESO", "cyan");
+
         var activeSources = await _sourceRepository.GetAllActiveAsync(cancellationToken);
+        LogRich($"Se encontraron {activeSources.Count()} fuentes activas para procesar.", "yellow");
 
         foreach (var sourceItem in activeSources)
         {
             if (!_scraperFactory.HasScraperFor(sourceItem.Alias ?? string.Empty))
             {
-                _logger.LogWarning("No scraper registered for source '{Name}' (alias: '{Alias}'). Skipping.", sourceItem.Name, sourceItem.Alias);
+                LogRich($"SALTANDO: No hay un scraper registrado para la fuente '{sourceItem.Name}' (alias: '{sourceItem.Alias}')", "red");
                 continue;
             }
 
             var scraper = _scraperFactory.GetFor(sourceItem.Alias!);
-            _logger.LogInformation("Processing source: {Name} using {Scraper}", sourceItem.Name, scraper.GetType().Name);
+            LogRich($"PROCESANDO FUENTE: {sourceItem.Name} (ID: {sourceItem.Id})", "bold yellow");
 
             foreach (var sourceCategory in sourceItem.Categories)
             {
+                var categoryName = sourceCategory.Category?.Name ?? "General";
+                LogRich($"CATEGORÍA: {categoryName}", "blue");
+
                 var articleUrls = await scraper.GetLatestArticleUrlsAsync(sourceCategory, cancellationToken);
-                _logger.LogInformation("Found {Count} articles for category '{Category}'", articleUrls.Count, sourceCategory.Category?.Name);
+                LogRich($"Se encontraron {articleUrls.Count} URLs de artículos para analizar.", "silver");
 
                 foreach (var url in articleUrls)
                 {
+                    LogRich($"ANALIZANDO URL: {url}", "gray");
+
                     var exists = await _newsRepository.ExistsByUrlAsync(url, cancellationToken);
-                    if (exists) continue;
+                    if (exists)
+                    {
+                        LogRich("Resultado: SALTADO (Ya existe en la base de datos)", "silver");
+                        continue;
+                    }
 
                     try
                     {
                         var newsArticle = await scraper.ScrapeArticleAsync(url, cancellationToken);
                         if (newsArticle != null)
                         {
-                            // 1. AI Content Analysis
-                            var analystResult = await _newsAnalyst.AnalyzeAsync(newsArticle, sourceCategory.Category?.Name ?? "General", cancellationToken);
-                            
+                            LogRich("Acción: Realizando Análisis de Contenido con IA...", "purple");
+                            var analystResult = await _newsAnalyst.AnalyzeAsync(newsArticle, categoryName, cancellationToken);
+
+                            var aiStatus = analystResult.IsEnabled ? "[IA: HABILITADA]" : "[IA: DESHABILITADA - PASE POR DEFECTO]";
+
                             if (!analystResult.IsValid)
                             {
-                                _logger.LogWarning("Article at {Url} failed AI analyst. Confidence: {Confidence}. Issues: {Issues}", 
-                                    url, analystResult.Confidence, string.Join(", ", analystResult.Issues));
+                                LogRich($"Resultado: RECHAZADO {aiStatus} - Confianza: {analystResult.Confidence}", "red");
+                                LogRich($"Problemas: {string.Join(", ", analystResult.Issues)}", "red");
                                 continue;
                             }
 
-                            var aiStatus = analystResult.IsEnabled ? "[AI: ENABLED]" : "[AI: DISABLED - DEFAULT PASS]";
-                            _logger.LogInformation("Article at {Url} passed analysis {Status} (Confidence: {Confidence})", 
-                                url, aiStatus, analystResult.Confidence);
+                            var resultColor = analystResult.IsEnabled ? "green" : "yellow";
+                            LogRich($"Resultado: APROBADO {aiStatus} - Confianza: {analystResult.Confidence}", resultColor);
 
                             newsArticle.CategoryId = sourceCategory.CategoryId;
                             newsArticle.SourceId = sourceItem.Id;
 
                             await _newsRepository.AddAsync(newsArticle, cancellationToken);
+                            LogRich("Base de datos: Guardado exitosamente en el repositorio.", "green");
+
                             await _newsPublisher.PublishAsync(newsArticle, cancellationToken);
+                            LogRich("Publicador: Enviado exitosamente al API de BolivianDaily.", "green");
 
-                            _logger.LogInformation("Successfully processed article: {Title}", newsArticle.Title);
+                            LogRich($"ÉXITO: Procesado artículo '{newsArticle.Title}'", "bold green");
 
+                            LogRich($"Espera: Esperando {submitNewsDelay}ms antes del siguiente artículo...", "gray");
                             await Task.Delay(submitNewsDelay, cancellationToken);
                         }
                     }
                     catch (Exception ex)
                     {
-                        _logger.LogError(ex, "Failed to process article at {Url}", url);
+                        LogRich($"EXCEPCIÓN: {ex.Message}", "bold red");
+                        _logger.LogError(ex, "Error al procesar el artículo en {Url}", url);
                     }
                 }
             }
         }
 
-        _logger.LogInformation("Scraping process finished.");
+        LogRich("PROCESO DE RASPADO FINALIZADO EXITOSAMENTE", "bold cyan");
         return true;
     }
 }
