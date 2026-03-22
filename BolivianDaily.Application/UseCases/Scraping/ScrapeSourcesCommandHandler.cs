@@ -4,6 +4,7 @@ using MediatR;
 using BolivianDaily.Application.Interfaces;
 using BolivianDaily.Domain.Repositories;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Configuration;
 
 public class ScrapeSourcesCommandHandler : IRequestHandler<ScrapeSourcesCommand, bool>
 {
@@ -11,6 +12,7 @@ public class ScrapeSourcesCommandHandler : IRequestHandler<ScrapeSourcesCommand,
     private readonly INewsRepository _newsRepository;
     private readonly IScraperFactory _scraperFactory;
     private readonly IExternalNewsApiClient _apiClient;
+    private readonly IConfiguration _configuration;
     private readonly ILogger<ScrapeSourcesCommandHandler> _logger;
 
     public ScrapeSourcesCommandHandler(
@@ -18,17 +20,21 @@ public class ScrapeSourcesCommandHandler : IRequestHandler<ScrapeSourcesCommand,
         INewsRepository newsRepository,
         IScraperFactory scraperFactory,
         IExternalNewsApiClient apiClient,
+        IConfiguration configuration,
         ILogger<ScrapeSourcesCommandHandler> logger)
     {
         _sourceRepository = sourceRepository;
         _newsRepository = newsRepository;
         _scraperFactory = scraperFactory;
         _apiClient = apiClient;
+        _configuration = configuration;
         _logger = logger;
     }
 
     public async Task<bool> Handle(ScrapeSourcesCommand request, CancellationToken cancellationToken)
     {
+        var submitNewsDelay = _configuration.GetValue<int>("ScrapingOptions:DelayBetweenArticlesMs", 1000);
+
         _logger.LogInformation("Starting scraping process...");
         var activeSources = await _sourceRepository.GetAllActiveAsync(cancellationToken);
 
@@ -40,7 +46,6 @@ public class ScrapeSourcesCommandHandler : IRequestHandler<ScrapeSourcesCommand,
                 continue;
             }
 
-            // Resolve the portal-specific scraper via Strategy Pattern
             var scraper = _scraperFactory.GetFor(sourceItem.Alias!);
             _logger.LogInformation("Processing source: {Name} using {Scraper}", sourceItem.Name, scraper.GetType().Name);
 
@@ -61,10 +66,13 @@ public class ScrapeSourcesCommandHandler : IRequestHandler<ScrapeSourcesCommand,
                         {
                             newsArticle.CategoryId = sourceCategory.CategoryId;
                             newsArticle.SourceId = sourceItem.Id;
-                            await _newsRepository.AddAsync(newsArticle, cancellationToken);
-                            //await _apiClient.SubmitNewsAsync(newsArticle, cancellationToken);
 
-                            //_logger.LogInformation("Successfully processed article: {Title}", newsArticle.Title);
+                            await _newsRepository.AddAsync(newsArticle, cancellationToken);
+                            await _apiClient.SubmitNewsAsync(newsArticle, cancellationToken);
+
+                            _logger.LogInformation("Successfully processed article: {Title}", newsArticle.Title);
+
+                            await Task.Delay(submitNewsDelay, cancellationToken);
                         }
                     }
                     catch (Exception ex)

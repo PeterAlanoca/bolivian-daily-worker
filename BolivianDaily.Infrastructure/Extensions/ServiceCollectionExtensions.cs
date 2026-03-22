@@ -9,6 +9,7 @@ using BolivianDaily.Infrastructure.Repositories;
 using BolivianDaily.Application.Interfaces;
 using BolivianDaily.Infrastructure.Services;
 using BolivianDaily.Infrastructure.Services.Scrapers;
+using BolivianDaily.Infrastructure.ExternalApi;
 
 public static class ServiceCollectionExtensions
 {
