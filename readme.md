@@ -1,187 +1,76 @@
-# News Scraping Worker (.NET + DDD + Clean Architecture)
+# Bolivian Daily - News Scraping Worker
 
-Este proyecto forma parte de un sistema Full Stack para la publicación
-de noticias digitales.
+Este proyecto es el componente de procesamiento automatizado (Worker) de un sistema Full Stack diseñado para la recopilación, análisis y publicación automatizada de noticias digitales. Utiliza tecnologías de Web Scraping e Inteligencia Artificial (DeepSeek) para garantizar contenido de alta calidad y relevancia.
 
-El Worker Service es el componente encargado de ejecutar procesos
-automatizados de web scraping, procesar la información obtenida y
-enviarla al backend para su almacenamiento y posterior análisis.
+## Resumen Ejecutivo
+El sistema aborda la problemática de los procesos manuales e ineficientes de selección de noticias. Propone una arquitectura desacoplada donde este "Worker" se encarga de la extracción automatizada desde múltiples fuentes públicas, procesando la información y validándola mediante un motor de IA antes de su publicación final en una plataforma web.
 
-La implementación sigue principios de Domain-Driven Design (DDD) y Clean
-Architecture, garantizando:
+---
 
--   Separación clara de responsabilidades
--   Mantenibilidad del código
--   Escalabilidad del sistema
--   Facilidad de pruebas
+## Arquitectura del Proyecto (Clean Architecture)
 
-------------------------------------------------------------------------
+El servicio sigue estrictamente los principios de Clean Architecture y DDD (Domain-Driven Design), organizado en las siguientes capas independientes:
 
-# Características principales
+- **`BolivianDaily.Domain` (Core)**: Contiene las entidades de negocio (`News`, `Source`), interfaces de repositorios y reglas fundamentales que no dependen de ninguna tecnología externa.
+- **`BolivianDaily.Application` (Casos de Uso)**: Implementa la lógica de orquestación mediante **MediatR**. Define los contratos de servicios e interfaces para el análisis de contenido y publicación.
+- **`BolivianDaily.Infrastructure` (Adaptadores)**: Contiene las implementaciones técnicas: scrapers de sitios específicos (Jornada, El Deber), clientes de API (BolivianDaily API), el analista de IA (DeepSeek API) y el acceso a datos mediante **Entity Framework Core**.
+- **`BolivianDaily.Worker` (Presentación/Consola)**: Es el punto de entrada que configura el servicio en segundo plano, la inyección de dependencias y el logging visual con **Spectre.Console**.
 
--   Extracción automática de noticias desde múltiples fuentes digitales.
--   Normalización y limpieza de datos obtenidos.
--   Integración con API REST del backend para persistencia.
--   Ejecución periódica mediante Jobs programados.
--   Preparación de datos para análisis con servicios externos de IA.
--   Arquitectura basada en DDD + Clean Architecture.
+---
 
-------------------------------------------------------------------------
+## Stack Tecnológico
+- **Lenguaje**: C# (.NET 10)
+- **Base de Datos**: PostgreSQL
+- **Orquestación**: MediatR (Casos de Uso)
+- **Scraping**: HttpClient & HtmlAgilityPack
+- **IA**: DeepSeek API (Modelos de Chat para validación)
+- **UI de Consola**: Spectre.Console (Logs enriquecidos en español)
+- **ORM**: Entity Framework Core
 
-# Tecnologías utilizadas
+---
 
-  -----------------------------------------------------------------------
-  Tecnología                         Descripción
-  ---------------------------------- ------------------------------------
-  .NET 8 Worker Service              Servicio en segundo plano para
-                                     procesos automatizados
+## Instalación y Configuración
 
-  HttpClient                         Consumo de APIs
+### Prerrequisitos
+- .NET 10 SDK
+- PostgreSQL (Base de datos configurada con el archivo `init_bolivian_daily.sql`)
+- Clave de API de DeepSeek (Configurada en el `appsettings.json`)
 
-  HtmlAgilityPack                    Web scraping y parsing de HTML
+### Opción 1: Instalación Local
+1.  **Clonar el repositorio**.
+2.  **Configurar la base de datos**: Ejecutar el script `init_bolivian_daily.sql` en tu instancia de PostgreSQL.
+3.  **Configurar `appsettings.json`**: Asegúrate de que las cadenas de conexión y las claves API sean correctas.
+4.  **Ejecutar**:
+    ```bash
+    dotnet build
+    dotnet run --project BolivianDaily.Worker
+    ```
 
-  Entity Framework Core              Acceso a base de datos
+### Opción 2: Instalación con Docker
+1.  **Construir la imagen**:
+    ```bash
+    docker build -t bolivian-daily-worker .
+    ```
+2.  **Ejecutar el contenedor**:
+    ```bash
+    docker run -d --name news-worker bolivian-daily-worker
+    ```
 
-  Serilog                            Logging estructurado
-  -----------------------------------------------------------------------
+---
 
-------------------------------------------------------------------------
+## Base de Datos
+El proyecto incluye un script de inicialización (`init_bolivian_daily.sql`) que crea las tablas necesarias:
+- `sources`: Fuentes de noticias configurables.
+- `categories`: Categorías de noticias (Local, Nacional, Deporte).
+- `news`: Repositorio de noticias procesadas y validadas.
 
-# Estructura del proyecto
+---
 
-El proyecto sigue Clean Architecture combinada con DDD.
+## Autor y Licencia
+- **Autor**: Peter Ciro Alanoca Aruquipa
+- **Contexto**: Proyecto de Especialidad - Maestría en Full Stack Development
+- **Institución**: Universidad Católica Boliviana "San Pablo" (UCB)
+- **Licencia**: Este software se desarrolla con fines exclusivamente académicos y de investigación.
 
-    /Worker
-     ├── src/
-     │    ├── Domain/           
-     │    │    └── Entidades y reglas de negocio
-     │    │        (NewsItem, ValueObjects, Domain Services)
-     │    │
-     │    ├── Application/      
-     │    │    └── Casos de uso
-     │    │        (ScrapingUseCase, SaveNewsUseCase)
-     │    │
-     │    ├── Infrastructure/   
-     │    │    └── Implementaciones técnicas
-     │    │        (ScraperService, ApiClient, EF Core)
-     │    │
-     │    ├── Presentation/     
-     │    │    └── Worker Service
-     │    │        (Program.cs, Worker.cs)
-     │    │
-     │    └── Utils/            
-     │         └── Utilidades y helpers
-     │            (HtmlParser, Helpers)
-     │
-     ├── tests/                 
-     │    └── Pruebas unitarias y de integración
-     │
-     └── appsettings.json      
-          └── Configuración del sistema
-
-------------------------------------------------------------------------
-
-# Configuración
-
-## 1. Clonar el repositorio
-
-``` bash
-git clone https://github.com/usuario/news-worker-dotnet.git
-```
-
-## 2. Configurar las fuentes de scraping
-
-Editar el archivo appsettings.json:
-
-``` json
-{
-  "ScrapingSources": [
-    "https://www.noticias1.com",
-    "https://www.noticias2.com"
-  ],
-  "BackendApi": "https://localhost:5001/api/news"
-}
-```
-
-## 3. Ejecutar el Worker
-
-``` bash
-dotnet run
-```
-
-------------------------------------------------------------------------
-
-# Flujo de trabajo
-
-Flujo general del sistema:
-
-    Scraping Sources
-          |
-          v
-    Web Scraper
-          |
-          v
-    Domain Entities (NewsItem)
-          |
-          v
-    Application Use Cases
-          |
-          v
-    Infrastructure (API Client)
-          |
-          v
-    Backend API
-          |
-          v
-    Database + AI Analysis
-
-1.  El Worker ejecuta tareas programadas de scraping.
-2.  Extrae noticias desde las fuentes configuradas.
-3.  Convierte los datos en entidades de dominio (NewsItem).
-4.  Los casos de uso coordinan la lógica del sistema.
-5.  La capa Infrastructure envía los datos al backend mediante API REST.
-6.  El backend almacena las noticias y las envía al módulo de IA para
-    clasificación.
-
-------------------------------------------------------------------------
-
-# Pruebas
-
-El proyecto incluye pruebas unitarias y de integración.
-
-Ejecutarlas con:
-
-``` bash
-dotnet test
-```
-
-Componentes probados:
-
--   ScraperService
--   ApiClient
-
-------------------------------------------------------------------------
-
-# Próximas mejoras
-
--   Implementar scraping distribuido con Azure Functions o Hangfire.
--   Mejorar la detección de noticias duplicadas.
--   Integrar métricas de rendimiento con Prometheus y Grafana.
--   Incorporar análisis semántico avanzado con IA.
-
-------------------------------------------------------------------------
-
-# Autor
-
-Peter Ciro Alanoca Aruquipa
-
-Proyecto de Especialidad\
-Maestría en Full Stack Development
-
-Universidad Católica Boliviana "San Pablo"
-
-------------------------------------------------------------------------
-
-# Licencia
-
-Este proyecto se desarrolla con fines académicos y de investigación.
+---
+*Nota: Este proyecto es un prototipo funcional que demuestra la viabilidad técnica de integrar IA y Scraping en una arquitectura Full Stack empresarial.*
