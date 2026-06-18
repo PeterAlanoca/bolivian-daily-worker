@@ -1,12 +1,12 @@
 <Solution>
   <Folder Name="/old-deprecated/">
-    <Project Path="old-deprecated/BolivianDaily.Domain/BolivianDaily.Domain.csproj" />
     <Project Path="old-deprecated/BolivianDaily.Application/BolivianDaily.Application.csproj" />
+    <Project Path="old-deprecated/BolivianDaily.Domain/BolivianDaily.Domain.csproj" />
     <Project Path="old-deprecated/BolivianDaily.Infrastructure/BolivianDaily.Infrastructure.csproj" />
     <Project Path="old-deprecated/BolivianDaily.Worker/BolivianDaily.Worker.csproj" />
   </Folder>
   <Folder Name="/Shared/">
-    <Project Path="src/Shared/BolivianDaily.Shared/BolivianDaily.Shared.csproj" />
+    <Project Path="Shared/BolivianDaily.Shared/BolivianDaily.Shared.csproj" />
   </Folder>
   <Folder Name="/ScraperWorker/">
     <Project Path="ScraperWorker/BolivianDaily.ScraperWorker.Application/BolivianDaily.ScraperWorker.Application.csproj" Id="4acb8aa1-e00b-4a8d-8b0e-419ffdc0a879" />
