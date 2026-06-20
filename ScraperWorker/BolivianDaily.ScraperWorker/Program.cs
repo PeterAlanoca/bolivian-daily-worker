@@ -6,7 +6,7 @@ var builder = Host.CreateApplicationBuilder(args);
 
 builder.Services
     .AddScraperApplication()
-    .AddScraperInfrastructure();
+    .AddScraperInfrastructure(builder.Configuration);
 
 builder.Services.AddHostedService<JornadaScrapingWorker>();
 

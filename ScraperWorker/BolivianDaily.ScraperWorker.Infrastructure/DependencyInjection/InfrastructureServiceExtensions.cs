@@ -3,16 +3,21 @@ using BolivianDaily.ScraperWorker.Domain.Repositories;
 using BolivianDaily.ScraperWorker.Infrastructure.Parsers;
 using BolivianDaily.ScraperWorker.Infrastructure.Persistence;
 using BolivianDaily.ScraperWorker.Infrastructure.Scraping;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace BolivianDaily.ScraperWorker.Infrastructure.DependencyInjection;
 
 public static class InfrastructureServiceExtensions
 {
-    public static IServiceCollection AddScraperInfrastructure(this IServiceCollection services)
+    public static IServiceCollection AddScraperInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddSingleton<IArticleRepository, InMemoryArticleRepository>();
-        services.AddSingleton<INewsSourceRepository, InMemoryNewsSourceRepository>();
+        services.AddDbContext<ScraperDbContext>(options =>
+            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
+
+        services.AddScoped<IArticleRepository, SqlArticleRepository>();
+        services.AddScoped<INewsSourceRepository, SqlNewsSourceRepository>();
 
         services.AddHttpClient<HtmlDocumentFetcher>(client =>
         {
