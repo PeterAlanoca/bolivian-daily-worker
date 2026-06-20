@@ -4,14 +4,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BolivianDaily.ScraperWorker.Infrastructure.Persistence;
 
-public class SqlNewsSourceRepository : INewsSourceRepository
+public class SqlNewsSourceRepository(ScraperDbContext context) : INewsSourceRepository
 {
-    private readonly ScraperDbContext _context;
-
-    public SqlNewsSourceRepository(ScraperDbContext context)
-    {
-        _context = context;
-    }
+    private readonly ScraperDbContext _context = context;
 
     public async Task<NewsSource?> GetActiveByAliasAsync(string alias, CancellationToken cancellationToken = default)
     {

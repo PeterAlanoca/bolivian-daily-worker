@@ -2,21 +2,14 @@ using BolivianDaily.ScraperWorker.Application.UseCases.ScrapeSource;
 
 namespace BolivianDaily.ScraperWorker.Workers;
 
-public class JornadaScrapingWorker : BackgroundService
+public class JornadaScrapingWorker(
+    IServiceProvider serviceProvider,
+    IConfiguration configuration,
+    ILogger<JornadaScrapingWorker> logger) : BackgroundService
 {
-    private readonly IServiceProvider _serviceProvider;
-    private readonly IConfiguration _configuration;
-    private readonly ILogger<JornadaScrapingWorker> _logger;
-
-    public JornadaScrapingWorker(
-        IServiceProvider serviceProvider,
-        IConfiguration configuration,
-        ILogger<JornadaScrapingWorker> logger)
-    {
-        _serviceProvider = serviceProvider;
-        _configuration = configuration;
-        _logger = logger;
-    }
+    private readonly IServiceProvider _serviceProvider = serviceProvider;
+    private readonly IConfiguration _configuration = configuration;
+    private readonly ILogger<JornadaScrapingWorker> _logger = logger;
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {

@@ -3,12 +3,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BolivianDaily.ScraperWorker.Infrastructure.Persistence;
 
-public class ScraperDbContext : DbContext
+public class ScraperDbContext(DbContextOptions<ScraperDbContext> options) : DbContext(options)
 {
-    public ScraperDbContext(DbContextOptions<ScraperDbContext> options) : base(options)
-    {
-    }
-
     public DbSet<Category> Categories => Set<Category>();
     public DbSet<NewsSource> NewsSources => Set<NewsSource>();
     public DbSet<SourceCategory> SourceCategories => Set<SourceCategory>();
