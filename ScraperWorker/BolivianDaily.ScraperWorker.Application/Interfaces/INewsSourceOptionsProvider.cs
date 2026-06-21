@@ -1,6 +1,6 @@
 ﻿namespace BolivianDaily.ScraperWorker.Application.Interfaces;
 
-public interface IJornadaOptionsProvider
+public interface INewsSourceOptionsProvider<TOptions>
 {
     string Alias { get; }
     int IntervalMinutes { get; }

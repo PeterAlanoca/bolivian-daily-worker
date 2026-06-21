@@ -3,7 +3,9 @@ using Microsoft.Extensions.Options;
 
 namespace BolivianDaily.ScraperWorker.Infrastructure.Configuration;
 
-public class JornadaOptionsProvider(IOptions<JornadaOptions> options) : IJornadaOptionsProvider
+public class NewsSourceOptionsProvider<TOptions>(
+    IOptions<TOptions> options) : INewsSourceOptionsProvider<TOptions>
+    where TOptions : NewsSourceOptions
 {
     public string Alias => options.Value.Alias;
     public int IntervalMinutes => options.Value.IntervalMinutes;

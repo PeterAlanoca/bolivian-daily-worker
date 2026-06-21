@@ -1,11 +1,12 @@
 using BolivianDaily.ScraperWorker.Application.Interfaces;
 using BolivianDaily.ScraperWorker.Application.UseCases.ScrapeSource;
+using BolivianDaily.ScraperWorker.Infrastructure.Configuration;
 
 namespace BolivianDaily.ScraperWorker.Workers;
 
 public class JornadaScrapingWorker(
     IServiceProvider serviceProvider,
-    IJornadaOptionsProvider jornadaOptionsProvider,
+    INewsSourceOptionsProvider<JornadaOptions> jornadaOptionsProvider,
     ILogger<JornadaScrapingWorker> logger) : BackgroundService
 {
 

@@ -18,8 +18,9 @@ public static class InfrastructureServiceExtensions
             options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
         services.Configure<JornadaOptions>(configuration.GetSection(JornadaOptions.SectionName));
+        services.Configure<ElDiarioOptions>(configuration.GetSection(ElDiarioOptions.SectionName));
 
-        services.AddSingleton<IJornadaOptionsProvider, JornadaOptionsProvider>();
+        services.AddSingleton(typeof(INewsSourceOptionsProvider<>), typeof(NewsSourceOptionsProvider<>));
 
         services.AddScoped<IArticleRepository, ArticleRepository>();
         services.AddScoped<INewsSourceRepository, NewsSourceRepository>();
