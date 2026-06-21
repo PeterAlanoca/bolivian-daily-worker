@@ -7,43 +7,30 @@ public class JornadaScrapingWorker(
     IConfiguration configuration,
     ILogger<JornadaScrapingWorker> logger) : BackgroundService
 {
-    private readonly IServiceProvider _serviceProvider = serviceProvider;
-    private readonly IConfiguration _configuration = configuration;
-    private readonly ILogger<JornadaScrapingWorker> _logger = logger;
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        var intervalMinutes = _configuration.GetValue("Scraping:Jornada:IntervalMinutes", 60);
-        var maxArticlesPerCategory = _configuration.GetValue("Scraping:Jornada:MaxArticlesPerCategory", 3);
-        var runOnStartup = _configuration.GetValue("Scraping:Jornada:RunOnStartup", true);
+        var intervalMinutes = configuration.GetValue("Scraping:Jornada:IntervalMinutes", 60);
         var interval = TimeSpan.FromMinutes(intervalMinutes);
 
-        _logger.LogInformation("Jornada scraping worker started. Interval: {IntervalMinutes} minutes", intervalMinutes);
+        logger.LogInformation("Jornada scraping worker started. Interval: {IntervalMinutes} minutes", intervalMinutes);
 
-        if (runOnStartup)
-        {
-            await RunOnceAsync(maxArticlesPerCategory, stoppingToken);
-        }
+        await RunOnceAsync(stoppingToken);
 
-        using var timer = new PeriodicTimer(interval);
-        while (await timer.WaitForNextTickAsync(stoppingToken))
-        {
-            await RunOnceAsync(maxArticlesPerCategory, stoppingToken);
-        }
     }
 
-    private async Task RunOnceAsync(int maxArticlesPerCategory, CancellationToken cancellationToken)
+    private async Task RunOnceAsync(CancellationToken cancellationToken)
     {
         try
         {
-            using var scope = _serviceProvider.CreateScope();
+            using var scope = serviceProvider.CreateScope();
             var useCase = scope.ServiceProvider.GetRequiredService<ScrapeSourceUseCase>();
 
             var result = await useCase.ExecuteAsync(
-                new ScrapeSourceCommand("jornada", maxArticlesPerCategory),
+                new ScrapeSourceCommand("jornada"),
                 cancellationToken);
 
-            _logger.LogInformation(
+            logger.LogInformation(
                 "Jornada scraping completed. Categories: {Categories}, URLs: {Urls}, Scraped: {Scraped}, Skipped: {Skipped}",
                 result.CategoriesProcessed,
                 result.ArticleUrlsFound,
@@ -55,7 +42,7 @@ public class JornadaScrapingWorker(
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Unexpected error while running Jornada scraping");
+            logger.LogError(ex, "Unexpected error while running Jornada scraping");
         }
     }
 }

@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace BolivianDaily.ScraperWorker.Infrastructure.Parsers;
 
-public class JornadaParser : INewsSourceParser
+public class JornadaParser(HtmlDocumentFetcher fetcher, ILogger<JornadaParser> logger) : INewsSourceParser
 {
     private const string NewsLinkSelector = "//div[contains(@class,'td-module') or contains(@class,'tdb_module')][.//a[contains(@class,'td-post-category')]]//a[(@rel='bookmark' or contains(@class,'td-image-wrap')) and not(contains(@class,'td-post-category'))]";
     private const string TitleSelector = "//h1[contains(@class,'entry-title') or contains(@class,'tdb-title-text')]";
@@ -15,15 +15,6 @@ public class JornadaParser : INewsSourceParser
     private const string BodySelector = "//div[contains(@class, 'tdb_single_content')]//div[contains(@class, 'tdb-block-inner')]";
     private const string AuthorSelector = "//a[contains(@class,'tdb-author-name')]";
     private const string ImageSelector = "//img[contains(@class,'td-modal-image')]";
-
-    private readonly HtmlDocumentFetcher _fetcher;
-    private readonly ILogger<JornadaParser> _logger;
-
-    public JornadaParser(HtmlDocumentFetcher fetcher, ILogger<JornadaParser> logger)
-    {
-        _fetcher = fetcher;
-        _logger = logger;
-    }
 
     public string SourceAlias => "jornada";
 
@@ -35,7 +26,7 @@ public class JornadaParser : INewsSourceParser
             return urls;
         }
 
-        var document = await _fetcher.FetchAsync(sourceCategory.Url, cancellationToken);
+        var document = await fetcher.FetchAsync(sourceCategory.Url, cancellationToken);
         if (document is null)
         {
             return urls;
@@ -64,13 +55,13 @@ public class JornadaParser : INewsSourceParser
             }
         }
 
-        _logger.LogInformation("[Jornada] Found {Count} article URLs in category {Category}", urls.Count, sourceCategory.Name);
+        logger.LogInformation("[Jornada] Found {Count} article URLs in category {Category}", urls.Count, sourceCategory.Name);
         return urls;
     }
 
     public async Task<Article?> ParseArticleAsync(string articleUrl, CancellationToken cancellationToken = default)
     {
-        var document = await _fetcher.FetchAsync(articleUrl, cancellationToken);
+        var document = await fetcher.FetchAsync(articleUrl, cancellationToken);
         if (document is null)
         {
             return null;
@@ -103,21 +94,13 @@ public class JornadaParser : INewsSourceParser
             {
                 RemoveJunkNodes(bodyNode);
 
-                var paragraphs = bodyNode.SelectNodes(".//p")
+                var firstParagraph = bodyNode.SelectNodes(".//p")
                     ?.Select(p => CleanText(p.InnerText))
-                    .Where(text => !string.IsNullOrWhiteSpace(text) && text.Length > 20)
-                    .Cast<string>()
-                    .ToList();
+                    .FirstOrDefault(text => !string.IsNullOrWhiteSpace(text) && text.Length > 20);
 
-                if (paragraphs is { Count: > 0 })
-                {
-                    article.Lead = paragraphs[0];
-                    article.Body = string.Join(Environment.NewLine + Environment.NewLine, paragraphs.Skip(1));
-                }
-                else
-                {
-                    article.Body = CleanText(bodyNode.InnerText);
-                }
+                article.Lead = firstParagraph;
+
+                article.Body = BuildCleanBodyHtml(bodyNode, firstParagraph);
             }
 
             article.Media = ExtractMedia(document);
@@ -125,7 +108,7 @@ public class JornadaParser : INewsSourceParser
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "[Jornada] Failed to parse article at {Url}", articleUrl);
+            logger.LogError(ex, "[Jornada] Failed to parse article at {Url}", articleUrl);
             return null;
         }
     }
@@ -209,16 +192,79 @@ public class JornadaParser : INewsSourceParser
 
     private static void RemoveJunkNodes(HtmlNode bodyNode)
     {
-        var junkNodes = bodyNode.SelectNodes(".//div[contains(@class, 'td-a-ad')] | .//script | .//ins | .//style | .//iframe");
+        // Selecciona todos los nodos de publicidad, scripts, estilos y elementos no deseados
+        var junkNodes = bodyNode.SelectNodes(
+            ".//div[contains(@class, 'td-a-ad')] | " +
+            ".//div[contains(@class, 'tdc-a-ad')] | " +
+            ".//div[contains(@class, 'td-spot-id')] | " +
+            ".//div[contains(@class, 'adsbygoogle')] | " +
+            ".//script | .//ins | .//style | .//iframe | .//noscript");
+
         if (junkNodes is null)
         {
             return;
         }
 
-        foreach (var junk in junkNodes)
+        // ToList() para evitar modificar la colección mientras se itera
+        foreach (var junk in junkNodes.ToList())
         {
             junk.Remove();
         }
+    }
+
+    /// <summary>
+    /// Genera el HTML limpio del body, excluyendo el primer párrafo (Lead).
+    /// Normaliza el whitespace interno de cada nodo de texto.
+    /// </summary>
+    private static string? BuildCleanBodyHtml(HtmlNode bodyNode, string? leadText)
+    {
+        var paragraphs = bodyNode.SelectNodes(".//p")?.ToList();
+
+        if (paragraphs is null || paragraphs.Count == 0)
+        {
+            // Sin párrafos: devolver InnerHtml del nodo completo
+            return NormalizeHtmlWhitespace(bodyNode.InnerHtml);
+        }
+
+        // Determinar si hay un Lead para omitir el primer <p>
+        bool skipFirst = !string.IsNullOrWhiteSpace(leadText);
+        var bodyParts = new System.Text.StringBuilder();
+
+        for (int i = 0; i < paragraphs.Count; i++)
+        {
+            if (i == 0 && skipFirst)
+            {
+                continue; // Saltar el primer párrafo (es el Lead)
+            }
+
+            var pNode = paragraphs[i];
+            var pText = CleanText(pNode.InnerText);
+            if (string.IsNullOrWhiteSpace(pText) || pText.Length <= 20)
+            {
+                continue; // Omitir párrafos vacíos o muy cortos
+            }
+
+            bodyParts.AppendLine(NormalizeHtmlWhitespace(pNode.OuterHtml));
+        }
+
+        var result = bodyParts.ToString().Trim();
+        return string.IsNullOrWhiteSpace(result) ? null : result;
+    }
+
+    /// <summary>
+    /// Normaliza el whitespace excesivo dentro de un string HTML.
+    /// Colapsa múltiples espacios/saltos de línea dentro de un nodo pero preserva la estructura HTML.
+    /// </summary>
+    private static string NormalizeHtmlWhitespace(string html)
+    {
+        if (string.IsNullOrWhiteSpace(html))
+        {
+            return html;
+        }
+
+        // Colapsar whitespace múltiple (espacios, tabs, newlines) en un solo espacio
+        // pero preservando las etiquetas HTML intactas
+        return System.Text.RegularExpressions.Regex.Replace(html, @"\s+", " ").Trim();
     }
 
     private static string? CleanText(string? value)

@@ -4,63 +4,61 @@ using Microsoft.Extensions.Logging;
 
 namespace BolivianDaily.ScraperWorker.Application.UseCases.ScrapeSource;
 
-public class ScrapeSourceUseCase
+public class ScrapeSourceUseCase(
+    INewsSourceRepository sourceRepository,
+    IArticleRepository articleRepository,
+    INewsSourceParserRegistry parserRegistry,
+    ILogger<ScrapeSourceUseCase> logger)
 {
-    private readonly INewsSourceRepository _sourceRepository;
-    private readonly IArticleRepository _articleRepository;
-    private readonly INewsSourceParserRegistry _parserRegistry;
-    private readonly ILogger<ScrapeSourceUseCase> _logger;
-
-    public ScrapeSourceUseCase(
-        INewsSourceRepository sourceRepository,
-        IArticleRepository articleRepository,
-        INewsSourceParserRegistry parserRegistry,
-        ILogger<ScrapeSourceUseCase> logger)
-    {
-        _sourceRepository = sourceRepository;
-        _articleRepository = articleRepository;
-        _parserRegistry = parserRegistry;
-        _logger = logger;
-    }
+    private const int CategoryDelayMs = 2000;
+    private const int MinArticleDelayMs = 1000;
+    private const int MaxArticleDelayMs = 3000;
 
     public async Task<ScrapeSourceResult> ExecuteAsync(ScrapeSourceCommand command, CancellationToken cancellationToken = default)
     {
-        var source = await _sourceRepository.GetActiveByAliasAsync(command.SourceAlias, cancellationToken);
+
+        var source = await sourceRepository.GetActiveByAliasAsync(command.SourceAlias, cancellationToken);
         if (source is null)
         {
-            _logger.LogWarning("No active source found for alias {SourceAlias}", command.SourceAlias);
+            logger.LogWarning("No active source found for alias {SourceAlias}", command.SourceAlias);
             return new ScrapeSourceResult(command.SourceAlias, 0, 0, 0, 0);
         }
 
-        if (!_parserRegistry.HasParserFor(source.Alias))
+        if (!parserRegistry.HasParserFor(source.Alias))
         {
-            _logger.LogWarning("No parser registered for source alias {SourceAlias}", source.Alias);
+            logger.LogWarning("No parser registered for source alias {SourceAlias}", source.Alias);
             return new ScrapeSourceResult(source.Alias, 0, 0, 0, 0);
         }
 
-        var parser = _parserRegistry.GetFor(source.Alias);
+        var parser = parserRegistry.GetFor(source.Alias);
         var categoriesProcessed = 0;
         var urlsFound = 0;
         var scraped = 0;
         var skipped = 0;
 
-        foreach (var sourceCategory in source.Categories.Where(c => c.State == "A"))
+        foreach (var sourceCategory in source.Categories)
         {
+            if (categoriesProcessed > 0)
+            {
+                await Task.Delay(CategoryDelayMs, cancellationToken);
+            }
+
             categoriesProcessed++;
-            _logger.LogInformation("Scraping {Source} category {Category}", source.Name, sourceCategory.Name);
+            logger.LogInformation("Scraping {Source} category {Category}", source.Name, sourceCategory.Name);
 
             var urls = await parser.GetLatestArticleUrlsAsync(sourceCategory, cancellationToken);
-            var selectedUrls = urls.Take(command.MaxArticlesPerCategory).ToList();
-            urlsFound += selectedUrls.Count;
+            urlsFound += urls.Count;
 
-            foreach (var url in selectedUrls)
+            foreach (var url in urls)
             {
-                if (await _articleRepository.ExistsByUrlAsync(url, cancellationToken))
+                if (await articleRepository.ExistsByUrlAsync(url, cancellationToken))
                 {
                     skipped++;
-                    _logger.LogInformation("Skipping existing article {Url}", url);
+                    logger.LogInformation("Skipping existing article {Url}", url);
                     continue;
                 }
+
+                await Task.Delay(new Random().Next(MinArticleDelayMs, MaxArticleDelayMs), cancellationToken);
 
                 var article = await parser.ParseArticleAsync(url, cancellationToken);
                 if (article is null)
@@ -73,10 +71,10 @@ public class ScrapeSourceUseCase
                 article.CategoryId = sourceCategory.CategoryId;
                 article.SourceCategoryId = sourceCategory.Id;
 
-                await _articleRepository.AddAsync(article, cancellationToken);
+                await articleRepository.AddAsync(article, cancellationToken);
                 scraped++;
 
-                _logger.LogInformation("Scraped article: {Title}", article.Title);
+                logger.LogInformation("Scraped article: {Title}", article.Title);
             }
         }
 

@@ -1,3 +1,3 @@
 namespace BolivianDaily.ScraperWorker.Application.UseCases.ScrapeSource;
 
-public sealed record ScrapeSourceCommand(string SourceAlias, int MaxArticlesPerCategory = 5);
+public sealed record ScrapeSourceCommand(string SourceAlias);

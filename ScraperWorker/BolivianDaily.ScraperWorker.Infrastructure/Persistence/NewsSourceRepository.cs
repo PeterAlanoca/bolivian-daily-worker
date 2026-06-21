@@ -4,14 +4,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BolivianDaily.ScraperWorker.Infrastructure.Persistence;
 
-public class SqlNewsSourceRepository(ScraperDbContext context) : INewsSourceRepository
+public class NewsSourceRepository(ScraperDbContext context) : INewsSourceRepository
 {
-    private readonly ScraperDbContext _context = context;
-
     public async Task<NewsSource?> GetActiveByAliasAsync(string alias, CancellationToken cancellationToken = default)
     {
-        return await _context.NewsSources
-            .Include(s => s.Categories)
-            .FirstOrDefaultAsync(s => s.Alias == alias && s.State == "A", cancellationToken);
+        return await context.NewsSources
+            .Include(s => s.Categories.Where(c => c.State == "A"))
+            .FirstOrDefaultAsync(
+                s => s.Alias == alias && s.State == "A",
+                cancellationToken);
     }
 }

@@ -16,8 +16,8 @@ public static class InfrastructureServiceExtensions
         services.AddDbContext<ScraperDbContext>(options =>
             options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
-        services.AddScoped<IArticleRepository, SqlArticleRepository>();
-        services.AddScoped<INewsSourceRepository, SqlNewsSourceRepository>();
+        services.AddScoped<IArticleRepository, ArticleRepository>();
+        services.AddScoped<INewsSourceRepository, NewsSourceRepository>();
 
         services.AddHttpClient<HtmlDocumentFetcher>(client =>
         {
