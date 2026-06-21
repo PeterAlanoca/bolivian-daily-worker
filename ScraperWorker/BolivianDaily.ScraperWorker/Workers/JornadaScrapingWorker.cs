@@ -1,48 +1,55 @@
+using BolivianDaily.ScraperWorker.Application.Interfaces;
 using BolivianDaily.ScraperWorker.Application.UseCases.ScrapeSource;
 
 namespace BolivianDaily.ScraperWorker.Workers;
 
 public class JornadaScrapingWorker(
     IServiceProvider serviceProvider,
-    IConfiguration configuration,
+    IJornadaOptionsProvider jornadaOptionsProvider,
     ILogger<JornadaScrapingWorker> logger) : BackgroundService
 {
 
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    protected override async Task ExecuteAsync(CancellationToken cancellationToken)
     {
-        var intervalMinutes = configuration.GetValue("Scraping:Jornada:IntervalMinutes", 60);
-        var interval = TimeSpan.FromMinutes(intervalMinutes);
+        var interval = TimeSpan.FromMinutes(jornadaOptionsProvider.IntervalMinutes);
 
-        logger.LogInformation("Jornada scraping worker started. Interval: {IntervalMinutes} minutes", intervalMinutes);
+        logger.LogInformation("Jornada scraping worker started. Interval: {IntervalMinutes} minutes", jornadaOptionsProvider.IntervalMinutes);
 
-        await RunOnceAsync(stoppingToken);
-
-    }
-
-    private async Task RunOnceAsync(CancellationToken cancellationToken)
-    {
-        try
+        while (!cancellationToken.IsCancellationRequested)
         {
-            using var scope = serviceProvider.CreateScope();
-            var useCase = scope.ServiceProvider.GetRequiredService<ScrapeSourceUseCase>();
+            try
+            {
+                logger.LogDebug("[BlackMarketPrice] Starting synchronization...");
 
-            var result = await useCase.ExecuteAsync(
-                new ScrapeSourceCommand("jornada"),
-                cancellationToken);
+                using var scope = serviceProvider.CreateScope();
+                var useCase = scope.ServiceProvider.GetRequiredService<ScrapeSourceUseCase>();
 
-            logger.LogInformation(
-                "Jornada scraping completed. Categories: {Categories}, URLs: {Urls}, Scraped: {Scraped}, Skipped: {Skipped}",
-                result.CategoriesProcessed,
-                result.ArticleUrlsFound,
-                result.ArticlesScraped,
-                result.ArticlesSkipped);
+                var result = await useCase.ExecuteAsync(
+                    new ScrapeSourceCommand(
+                        jornadaOptionsProvider.Alias, 
+                        jornadaOptionsProvider.CategoryDelayMs, 
+                        jornadaOptionsProvider.MinArticleDelayMs,
+                        jornadaOptionsProvider.MaxArticleDelayMs),
+                    cancellationToken);
+
+                logger.LogInformation(
+                    "Jornada scraping completed. Categories: {Categories}, URLs: {Urls}, Scraped: {Scraped}, Skipped: {Skipped}",
+                    result.CategoriesProcessed,
+                    result.ArticleUrlsFound,
+                    result.ArticlesScraped,
+                    result.ArticlesSkipped);
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                logger.LogWarning("Jornada Sync was canceled during execution.");
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Unexpected error while running Jornada scraping");
+            }
+            await Task.Delay(interval, cancellationToken);
         }
-        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
-        {
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Unexpected error while running Jornada scraping");
-        }
+
+        logger.LogInformation("Jornada Worker is shutting down.");
     }
 }

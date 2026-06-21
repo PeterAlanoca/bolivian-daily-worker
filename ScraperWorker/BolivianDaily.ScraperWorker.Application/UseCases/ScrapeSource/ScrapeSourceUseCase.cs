@@ -10,13 +10,9 @@ public class ScrapeSourceUseCase(
     INewsSourceParserRegistry parserRegistry,
     ILogger<ScrapeSourceUseCase> logger)
 {
-    private const int CategoryDelayMs = 2000;
-    private const int MinArticleDelayMs = 1000;
-    private const int MaxArticleDelayMs = 3000;
 
     public async Task<ScrapeSourceResult> ExecuteAsync(ScrapeSourceCommand command, CancellationToken cancellationToken = default)
     {
-
         var source = await sourceRepository.GetActiveByAliasAsync(command.SourceAlias, cancellationToken);
         if (source is null)
         {
@@ -40,7 +36,7 @@ public class ScrapeSourceUseCase(
         {
             if (categoriesProcessed > 0)
             {
-                await Task.Delay(CategoryDelayMs, cancellationToken);
+                await Task.Delay(command.CategoryDelayMs, cancellationToken);
             }
 
             categoriesProcessed++;
@@ -58,7 +54,7 @@ public class ScrapeSourceUseCase(
                     continue;
                 }
 
-                await Task.Delay(new Random().Next(MinArticleDelayMs, MaxArticleDelayMs), cancellationToken);
+                await Task.Delay(new Random().Next(command.MinArticleDelayMs, command.MaxArticleDelayMs), cancellationToken);
 
                 var article = await parser.ParseArticleAsync(url, cancellationToken);
                 if (article is null)
