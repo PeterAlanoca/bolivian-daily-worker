@@ -7,6 +7,10 @@ using BolivianDaily.ScraperWorker.Infrastructure.Scraping;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using BolivianDaily.ScraperWorker.Infrastructure.Messaging;
+using RabbitMQ.Client;
+using Microsoft.Extensions.Options;
+using BolivianDaily.Shared.Messaging;
 
 namespace BolivianDaily.ScraperWorker.Infrastructure.DependencyInjection;
 
@@ -22,8 +26,8 @@ public static class InfrastructureServiceExtensions
 
         services.AddSingleton(typeof(INewsSourceOptionsProvider<>), typeof(NewsSourceOptionsProvider<>));
 
-        services.AddScoped<IArticleRepository, ArticleRepository>();
-        services.AddScoped<INewsSourceRepository, NewsSourceRepository>();
+        services.AddScoped<IArticleRepository, SqlArticleRepository>();
+        services.AddScoped<INewsSourceRepository, SqlNewsSourceRepository>();
 
         services.AddHttpClient<HtmlDocumentFetcher>(client =>
         {
@@ -33,6 +37,26 @@ public static class InfrastructureServiceExtensions
 
         services.AddTransient<INewsSourceParser, JornadaParser>();
         services.AddTransient<INewsSourceParserRegistry, NewsSourceParserRegistry>();
+
+        services.AddSingleton<ConnectionFactory>(sp =>
+        {
+            var opts = sp.GetRequiredService<IOptions<RabbitMqOptions>>().Value;
+            return new ConnectionFactory
+            {
+                HostName = opts.HostName,
+                Port = opts.Port,
+                UserName = opts.UserName,
+                Password = opts.Password
+            };
+        });
+
+        services.AddSingleton<IConnection>(sp =>
+        {
+            var factory = sp.GetRequiredService<ConnectionFactory>();
+            return factory.CreateConnection();
+        });
+
+        services.AddScoped<IArticleScrapedEventPublisher, RabbitMqArticleScrapedEventPublisher>();
 
         return services;
     }

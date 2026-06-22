@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BolivianDaily.ScraperWorker.Infrastructure.Persistence;
 
-public class ArticleRepository(ScraperDbContext context) : IArticleRepository
+public class SqlArticleRepository(ScraperDbContext context) : IArticleRepository
 {
     public async Task<bool> ExistsByUrlAsync(string url, CancellationToken cancellationToken = default)
     {

@@ -1,6 +1,7 @@
 using BolivianDaily.ScraperWorker.Application.Interfaces;
 using BolivianDaily.ScraperWorker.Domain.Repositories;
 using Microsoft.Extensions.Logging;
+using BolivianDaily.ScraperWorker.Application.Mappers;
 
 namespace BolivianDaily.ScraperWorker.Application.UseCases.ScrapeSource;
 
@@ -8,6 +9,7 @@ public class ScrapeSourceUseCase(
     INewsSourceRepository sourceRepository,
     IArticleRepository articleRepository,
     INewsSourceParserRegistry parserRegistry,
+    IArticleScrapedEventPublisher eventPublisher,
     ILogger<ScrapeSourceUseCase> logger)
 {
 
@@ -71,6 +73,11 @@ public class ScrapeSourceUseCase(
                 scraped++;
 
                 logger.LogInformation("Scraped article: {Title}", article.Title);
+
+                var scrapedEvent = article.AsScrapedEvent(source, sourceCategory);
+                await eventPublisher.PublishAsync(scrapedEvent, cancellationToken);
+
+                logger.LogInformation("Scraped queue article: {Title}", article.Title);
             }
         }
 
