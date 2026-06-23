@@ -1,4 +1,10 @@
 <Solution>
+  <Folder Name="/CheckerWorker/">
+    <Project Path="CheckerWorker/BolivianDaily.CheckerWorker.Application/BolivianDaily.CheckerWorker.Application.csproj" Id="fa1d4f2a-87a9-41e2-97e7-e5b96802543b" />
+    <Project Path="CheckerWorker/BolivianDaily.CheckerWorker.Domain/BolivianDaily.CheckerWorker.Domain.csproj" Id="438352c1-3bf2-4198-bf81-44755bdfffd9" />
+    <Project Path="CheckerWorker/BolivianDaily.CheckerWorker.Infrastructure/BolivianDaily.CheckerWorker.Infrastructure.csproj" Id="b8a159d2-4d42-4c76-bd29-8dd23c304286" />
+    <Project Path="CheckerWorker/BolivianDaily.CheckerWorker/BolivianDaily.CheckerWorker.csproj" Id="21980a53-4d43-44eb-a844-d648bf6d7bd5" />
+  </Folder>
   <Folder Name="/old-deprecated/">
     <Project Path="old-deprecated/BolivianDaily.Application/BolivianDaily.Application.csproj" />
     <Project Path="old-deprecated/BolivianDaily.Domain/BolivianDaily.Domain.csproj" />
@@ -13,5 +19,11 @@
     <Project Path="ScraperWorker/BolivianDaily.ScraperWorker.Domain/BolivianDaily.ScraperWorker.Domain.csproj" Id="28b05a23-b4a8-4774-bcd5-4357d122c8a3" />
     <Project Path="ScraperWorker/BolivianDaily.ScraperWorker.Infrastructure/BolivianDaily.ScraperWorker.Infrastructure.csproj" Id="cf9920d7-ef69-41ed-8612-75906f000fb2" />
     <Project Path="ScraperWorker/BolivianDaily.ScraperWorker/BolivianDaily.ScraperWorker.csproj" Id="a83aa4c4-e976-474a-b3da-9e074b3f441a" />
+  </Folder>
+  <Folder Name="/SyncWorker/">
+    <Project Path="SyncWorker/BolivianDaily.SyncWorker.Application/BolivianDaily.SyncWorker.Application.csproj" Id="822d8db3-cd86-479d-8c8f-f633d74fe9b4" />
+    <Project Path="SyncWorker/BolivianDaily.SyncWorker.Domain/BolivianDaily.SyncWorker.Domain.csproj" Id="21eb96c0-2b16-4667-a0e8-a59253c2c912" />
+    <Project Path="SyncWorker/BolivianDaily.SyncWorker.Infrastructure/BolivianDaily.SyncWorker.Infrastructure.csproj" />
+    <Project Path="SyncWorker/BolivianDaily.SyncWorker/BolivianDaily.SyncWorker.csproj" Id="bd414773-632b-4b1c-a23a-6f8178a8e041" />
   </Folder>
 </Solution>
