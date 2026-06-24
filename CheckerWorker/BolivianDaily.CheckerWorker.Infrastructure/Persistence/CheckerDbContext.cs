@@ -28,7 +28,18 @@ public sealed class CheckerDbContext(DbContextOptions<CheckerDbContext> options)
             entity.Property(article => article.PublicationDate).HasColumnName("publication_date");
             entity.Property(article => article.State).HasColumnName("state").HasMaxLength(1).HasDefaultValue("A");
             entity.Property(article => article.ProcessedAt).HasColumnName("processed_at");
-            entity.Property(article => article.WarningsJson).HasColumnName("warnings_json");
+            entity.Property(article => article.Warnings).HasColumnName("warnings");
+            entity.Property(article => article.IsValid).HasColumnName("is_valid");
+            entity.Property(article => article.HtmlFormatPassed).HasColumnName("html_format_passed");
+            entity.Property(article => article.HtmlFormatReason).HasColumnName("html_format_reason");
+            entity.Property(article => article.CategoryAccuracyPassed).HasColumnName("category_accuracy_passed");
+            entity.Property(article => article.CategoryAccuracyReason).HasColumnName("category_accuracy_reason");
+            entity.Property(article => article.SuggestedCategory).HasColumnName("suggested_category").HasMaxLength(50);
+            entity.Property(article => article.NoAdvertisingPassed).HasColumnName("no_advertising_passed");
+            entity.Property(article => article.NoAdvertisingReason).HasColumnName("no_advertising_reason");
+            entity.Property(article => article.DetectedNetworksJson).HasColumnName("detected_networks");
+            entity.Property(article => article.ReadyToPublishPassed).HasColumnName("ready_to_publish_passed");
+            entity.Property(article => article.ReadyToPublishReason).HasColumnName("ready_to_publish_reason");
             entity.HasMany(article => article.Multimedia)
                 .WithOne()
                 .HasForeignKey(media => media.ProcessedArticleId)

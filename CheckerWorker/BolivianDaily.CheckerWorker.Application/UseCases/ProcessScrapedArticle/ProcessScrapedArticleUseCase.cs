@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 namespace BolivianDaily.CheckerWorker.Application.UseCases.ProcessScrapedArticle;
 
 public sealed class ProcessScrapedArticleUseCase(
-    IAiArticleChecker aiArticleChecker,
+    IArticleChecker articleChecker,
     IProcessedArticleRepository processedArticleRepository,
     IArticleProcessedEventPublisher eventPublisher,
     ILogger<ProcessScrapedArticleUseCase> logger)
@@ -19,7 +19,7 @@ public sealed class ProcessScrapedArticleUseCase(
             return;
         }
 
-        var processedArticle = await aiArticleChecker.CheckAsync(message, cancellationToken);
+        var processedArticle = await articleChecker.CheckAsync(message, cancellationToken);
         await processedArticleRepository.AddAsync(processedArticle, cancellationToken);
         await eventPublisher.PublishAsync(processedArticle.ToEvent(), cancellationToken);
 

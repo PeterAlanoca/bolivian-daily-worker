@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BolivianDaily.CheckerWorker.Infrastructure.Persistence;
 
-public sealed class ProcessedArticleRepository(CheckerDbContext context) : IProcessedArticleRepository
+public sealed class SqlProcessedArticleRepository(CheckerDbContext context) : IProcessedArticleRepository
 {
     public Task<bool> ExistsForScrapedArticleAsync(long scrapedArticleId, CancellationToken cancellationToken = default)
     {

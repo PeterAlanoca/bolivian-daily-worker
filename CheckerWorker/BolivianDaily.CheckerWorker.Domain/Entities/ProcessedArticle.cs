@@ -6,8 +6,8 @@ public class ProcessedArticle
 {
     public long Id { get; set; }
     public long ScrapedArticleId { get; set; }
-    public long? CategoryId { get; set; }
     public long? SourceId { get; set; }
+    public long? CategoryId { get; set; }
     public string Title { get; set; } = string.Empty;
     public string? Pretitle { get; set; }
     public string? Subtitle { get; set; }
@@ -17,7 +17,20 @@ public class ProcessedArticle
     public DateTime? PublicationDate { get; set; }
     public string State { get; set; } = "A";
     public DateTime ProcessedAt { get; set; } = DateTime.UtcNow;
-    public string? WarningsJson { get; set; }
+    public string? Warnings { get; set; }
+
+    public bool IsValid { get; set; }
+    public bool HtmlFormatPassed { get; set; }
+    public string? HtmlFormatReason { get; set; }
+    public bool CategoryAccuracyPassed { get; set; }
+    public string? CategoryAccuracyReason { get; set; }
+    public string? SuggestedCategory { get; set; }
+    public bool NoAdvertisingPassed { get; set; }
+    public string? NoAdvertisingReason { get; set; }
+    public string? DetectedNetworksJson { get; set; }
+    public bool ReadyToPublishPassed { get; set; }
+    public string? ReadyToPublishReason { get; set; }
+
     public List<ProcessedArticleMedia> Multimedia { get; set; } = new();
 
     public ArticleProcessedEvent ToEvent()

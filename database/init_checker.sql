@@ -12,7 +12,19 @@ CREATE TABLE processed_articles (
     publication_date TIMESTAMP,
     state VARCHAR(1) NOT NULL DEFAULT 'A',
     processed_at TIMESTAMP NOT NULL,
-    warnings_json TEXT,
+    warnings TEXT,
+    is_valid BOOLEAN NOT NULL DEFAULT FALSE,
+    html_format_passed BOOLEAN NOT NULL DEFAULT FALSE,
+    html_format_reason TEXT,
+    category_accuracy_passed BOOLEAN NOT NULL DEFAULT FALSE,
+    category_accuracy_reason TEXT,
+    suggested_category VARCHAR(50),
+    no_advertising_passed BOOLEAN NOT NULL DEFAULT FALSE,
+    no_advertising_reason TEXT,
+    detected_networks JSONB,
+    ready_to_publish_passed BOOLEAN NOT NULL DEFAULT FALSE,
+    ready_to_publish_reason TEXT,
+
     CONSTRAINT uq_processed_articles_scraped_article_id UNIQUE (scraped_article_id)
 );
 
