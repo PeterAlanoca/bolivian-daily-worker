@@ -22,7 +22,7 @@ public sealed class SyncProcessedArticleUseCase(
         var syncLog = new ArticleSyncLog
         {
             ProcessedArticleId = message.ProcessedArticleId,
-            SourceArticleId = message.SourceArticleId,
+            ScrapedArticleId = message.ScrapedArticleId,
             Attempts = 1
         };
 

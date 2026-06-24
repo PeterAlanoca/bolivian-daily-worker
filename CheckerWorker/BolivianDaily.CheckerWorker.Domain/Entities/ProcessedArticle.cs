@@ -4,11 +4,10 @@ namespace BolivianDaily.CheckerWorker.Domain.Entities;
 
 public class ProcessedArticle
 {
-    public Guid Id { get; set; } = Guid.NewGuid();
-    public long SourceArticleId { get; set; }
+    public long Id { get; set; }
+    public long ScrapedArticleId { get; set; }
     public long? CategoryId { get; set; }
     public long? SourceId { get; set; }
-    public int UserId { get; set; } = 1;
     public string Title { get; set; } = string.Empty;
     public string? Pretitle { get; set; }
     public string? Subtitle { get; set; }
@@ -24,11 +23,10 @@ public class ProcessedArticle
     public ArticleProcessedEvent ToEvent()
     {
         return new ArticleProcessedEvent(
-            SourceArticleId,
+            ScrapedArticleId,
             Id,
             CategoryId,
             SourceId,
-            UserId,
             Title,
             Pretitle,
             Subtitle,

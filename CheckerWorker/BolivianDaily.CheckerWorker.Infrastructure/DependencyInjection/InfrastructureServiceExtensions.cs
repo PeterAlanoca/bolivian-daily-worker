@@ -17,10 +17,9 @@ public static class InfrastructureServiceExtensions
     {
         services.Configure<RabbitMqOptions>(configuration.GetSection(RabbitMqOptions.SectionName));
         services.Configure<OpenRouterOptions>(configuration.GetSection(OpenRouterOptions.SectionName));
-        services.Configure<CheckerOptions>(configuration.GetSection(CheckerOptions.SectionName));
 
         services.AddDbContext<CheckerDbContext>(options =>
-            options.UseNpgsql(configuration.GetConnectionString("CheckerDb")));
+            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
         services.AddScoped<IProcessedArticleRepository, ProcessedArticleRepository>();
         services.AddScoped<IArticleProcessedEventPublisher, RabbitMqArticleProcessedEventPublisher>();

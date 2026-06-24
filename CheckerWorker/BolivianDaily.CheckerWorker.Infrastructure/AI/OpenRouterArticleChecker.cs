@@ -11,8 +11,7 @@ namespace BolivianDaily.CheckerWorker.Infrastructure.AI;
 
 public sealed class OpenRouterArticleChecker(
     HttpClient httpClient,
-    IOptions<OpenRouterOptions> openRouterOptions,
-    IOptions<CheckerOptions> checkerOptions) : IAiArticleChecker
+    IOptions<OpenRouterOptions> openRouterOptions) : IAiArticleChecker
 {
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
 
@@ -54,10 +53,9 @@ public sealed class OpenRouterArticleChecker(
 
         return new ProcessedArticle
         {
-            SourceArticleId = message.ArticleId,
+            ScrapedArticleId = message.ArticleId,
             SourceId = message.SourceId,
             CategoryId = checkedArticle.CategoryId ?? message.CategoryId,
-            UserId = checkerOptions.Value.UserId,
             Title = checkedArticle.Title,
             Pretitle = checkedArticle.Pretitle,
             Subtitle = checkedArticle.Subtitle,
@@ -80,10 +78,9 @@ public sealed class OpenRouterArticleChecker(
     {
         return new ProcessedArticle
         {
-            SourceArticleId = message.ArticleId,
+            ScrapedArticleId = message.ArticleId,
             SourceId = message.SourceId,
             CategoryId = message.CategoryId,
-            UserId = checkerOptions.Value.UserId,
             Title = message.Title,
             Pretitle = message.Pretitle,
             Subtitle = message.Subtitle,

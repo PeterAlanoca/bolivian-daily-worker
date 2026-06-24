@@ -22,7 +22,7 @@ public sealed class BolivianDailyApiClient(HttpClient httpClient, IOptions<Exter
         request.Content = JsonContent.Create(new ExternalArticleRequest(
             message.CategoryId,
             message.SourceId,
-            message.UserId,
+            1,
             message.Title,
             message.Pretitle,
             message.Subtitle,

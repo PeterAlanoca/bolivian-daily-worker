@@ -2,9 +2,9 @@ namespace BolivianDaily.SyncWorker.Domain.Entities;
 
 public class ArticleSyncLog
 {
-    public Guid Id { get; set; } = Guid.NewGuid();
-    public Guid ProcessedArticleId { get; set; }
-    public long SourceArticleId { get; set; }
+    public long Id { get; set; }
+    public long ProcessedArticleId { get; set; }
+    public long ScrapedArticleId { get; set; }
     public string Status { get; set; } = "Pending";
     public int Attempts { get; set; }
     public string? ExternalId { get; set; }

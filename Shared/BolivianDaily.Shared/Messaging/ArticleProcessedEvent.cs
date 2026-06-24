@@ -1,11 +1,10 @@
 namespace BolivianDaily.Shared.Messaging;
 
 public sealed record ArticleProcessedEvent(
-    long SourceArticleId,
-    Guid ProcessedArticleId,
+    long ScrapedArticleId,
+    long ProcessedArticleId,
     long? CategoryId,
     long? SourceId,
-    int UserId,
     string Title,
     string? Pretitle,
     string? Subtitle,

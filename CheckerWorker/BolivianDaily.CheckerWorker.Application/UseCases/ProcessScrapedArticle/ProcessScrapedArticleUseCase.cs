@@ -7,20 +7,20 @@ namespace BolivianDaily.CheckerWorker.Application.UseCases.ProcessScrapedArticle
 
 public sealed class ProcessScrapedArticleUseCase(
     IAiArticleChecker aiArticleChecker,
-    IProcessedArticleRepository repository,
+    IProcessedArticleRepository processedArticleRepository,
     IArticleProcessedEventPublisher eventPublisher,
     ILogger<ProcessScrapedArticleUseCase> logger)
 {
     public async Task ExecuteAsync(ArticleScrapedEvent message, CancellationToken cancellationToken = default)
     {
-        if (await repository.ExistsForSourceArticleAsync(message.ArticleId, cancellationToken))
+        if (await processedArticleRepository.ExistsForScrapedArticleAsync(message.ArticleId, cancellationToken))
         {
             logger.LogInformation("Article {ArticleId} was already processed", message.ArticleId);
             return;
         }
 
         var processedArticle = await aiArticleChecker.CheckAsync(message, cancellationToken);
-        await repository.AddAsync(processedArticle, cancellationToken);
+        await processedArticleRepository.AddAsync(processedArticle, cancellationToken);
         await eventPublisher.PublishAsync(processedArticle.ToEvent(), cancellationToken);
 
         logger.LogInformation(

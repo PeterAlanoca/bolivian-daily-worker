@@ -14,11 +14,11 @@ public sealed class CheckerDbContext(DbContextOptions<CheckerDbContext> options)
         {
             entity.ToTable("processed_articles");
             entity.HasKey(article => article.Id);
-            entity.HasIndex(article => article.SourceArticleId).IsUnique();
-            entity.Property(article => article.SourceArticleId).HasColumnName("source_article_id");
+            entity.Property(article => article.Id).HasColumnName("id");
+            entity.HasIndex(article => article.ScrapedArticleId).IsUnique();
+            entity.Property(article => article.ScrapedArticleId).HasColumnName("scraped_article_id");
             entity.Property(article => article.CategoryId).HasColumnName("category_id");
             entity.Property(article => article.SourceId).HasColumnName("source_id");
-            entity.Property(article => article.UserId).HasColumnName("user_id");
             entity.Property(article => article.Title).HasColumnName("title").HasMaxLength(500).IsRequired();
             entity.Property(article => article.Pretitle).HasColumnName("pretitle").HasMaxLength(500);
             entity.Property(article => article.Subtitle).HasColumnName("subtitle").HasMaxLength(500);

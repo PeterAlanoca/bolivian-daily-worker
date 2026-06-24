@@ -13,9 +13,10 @@ public sealed class SyncDbContext(DbContextOptions<SyncDbContext> options) : DbC
         {
             entity.ToTable("article_sync_logs");
             entity.HasKey(log => log.Id);
+            entity.Property(log => log.Id).HasColumnName("id");
             entity.HasIndex(log => log.ProcessedArticleId);
             entity.Property(log => log.ProcessedArticleId).HasColumnName("processed_article_id");
-            entity.Property(log => log.SourceArticleId).HasColumnName("source_article_id");
+            entity.Property(log => log.ScrapedArticleId).HasColumnName("scraped_article_id");
             entity.Property(log => log.Status).HasColumnName("status").HasMaxLength(50).IsRequired();
             entity.Property(log => log.Attempts).HasColumnName("attempts");
             entity.Property(log => log.ExternalId).HasColumnName("external_id").HasMaxLength(250);

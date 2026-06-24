@@ -6,10 +6,10 @@ namespace BolivianDaily.CheckerWorker.Infrastructure.Persistence;
 
 public sealed class ProcessedArticleRepository(CheckerDbContext context) : IProcessedArticleRepository
 {
-    public Task<bool> ExistsForSourceArticleAsync(long sourceArticleId, CancellationToken cancellationToken = default)
+    public Task<bool> ExistsForScrapedArticleAsync(long scrapedArticleId, CancellationToken cancellationToken = default)
     {
         return context.ProcessedArticles.AnyAsync(
-            article => article.SourceArticleId == sourceArticleId,
+            article => article.ScrapedArticleId == scrapedArticleId,
             cancellationToken);
     }
 
