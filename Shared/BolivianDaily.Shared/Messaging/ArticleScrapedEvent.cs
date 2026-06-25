@@ -5,6 +5,7 @@ public sealed record ArticleScrapedEvent(
     long? SourceId,
     string SourceName,
     string SourceUrl,
+    string? ArticleUrl,
     long? CategoryId,
     string? CategoryName,
     string? Pretitle,

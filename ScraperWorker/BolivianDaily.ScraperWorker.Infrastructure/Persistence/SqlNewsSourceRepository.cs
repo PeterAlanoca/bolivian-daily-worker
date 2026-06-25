@@ -10,6 +10,7 @@ public class SqlNewsSourceRepository(ScraperDbContext context) : INewsSourceRepo
     {
         return await context.NewsSources
             .Include(s => s.Categories.Where(c => c.State == "A"))
+            .ThenInclude(c => c.Category)
             .FirstOrDefaultAsync(
                 s => s.Alias == alias && s.State == "A",
                 cancellationToken);

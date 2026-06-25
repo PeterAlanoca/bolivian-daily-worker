@@ -65,8 +65,11 @@ public class ScrapeSourceUseCase(
                     continue;
                 }
 
+                var category = sourceCategory.Category
+                 ?? throw new InvalidOperationException($"Category not loaded for SourceCategory {sourceCategory.Id}");
+
                 article.NewsSourceId = source.Id;
-                article.CategoryId = sourceCategory.CategoryId;
+                article.CategoryId = category.Id;
                 article.SourceCategoryId = sourceCategory.Id;
 
                 await articleRepository.AddAsync(article, cancellationToken);
@@ -74,7 +77,7 @@ public class ScrapeSourceUseCase(
 
                 logger.LogInformation("Scraped article: {Title}", article.Title);
 
-                var scrapedEvent = article.AsScrapedEvent(source, sourceCategory);
+                var scrapedEvent = article.AsScrapedEvent(source, category);
                 await eventPublisher.PublishAsync(scrapedEvent, cancellationToken);
 
                 logger.LogInformation("Scraped queue article: {Title}", article.Title);
