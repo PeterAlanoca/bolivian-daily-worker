@@ -13,7 +13,11 @@ public static class OpenRouterMapper
         {
             ScrapedArticleId = source.ArticleId,
             SourceId = source.SourceId,
+            SourceName = source.SourceName,
+            SourceUrl = source.SourceUrl,
+            ArticleUrl = source.ArticleUrl ?? string.Empty,
             CategoryId = source.CategoryId,
+            CategoryName = source.CategoryName,
             Title = source.Title,
             Pretitle = source.Pretitle,
             Subtitle = source.Subtitle,
@@ -21,6 +25,7 @@ public static class OpenRouterMapper
             Body = source.RawBody ?? source.Lead ?? source.Title,
             Author = source.Author,
             PublicationDate = source.PublicationDate,
+            ScrapedAt = source.ScrapedAt,
             Multimedia = [.. source.Multimedia.Select(MapMedia)],
             Warnings = null,
             IsValid = validation.IsValid,
@@ -31,7 +36,7 @@ public static class OpenRouterMapper
             SuggestedCategory = validation.Validations.CategoryAccuracy.SuggestedCategory,
             NoAdvertisingPassed = validation.Validations.NoAdvertising.Passed,
             NoAdvertisingReason = validation.Validations.NoAdvertising.Reason,
-            DetectedNetworksJson = validation.Validations.NoAdvertising.DetectedNetworks.Count > 0
+            DetectedNetworks = validation.Validations.NoAdvertising.DetectedNetworks.Count > 0
                 ? JsonSerializer.Serialize(validation.Validations.NoAdvertising.DetectedNetworks)
                 : null,
             ReadyToPublishPassed = validation.Validations.ReadyToPublish.Passed,
@@ -45,7 +50,11 @@ public static class OpenRouterMapper
         {
             ScrapedArticleId = source.ArticleId,
             SourceId = source.SourceId,
+            SourceName = source.SourceName,
+            SourceUrl = source.SourceUrl,
+            ArticleUrl = source.ArticleUrl ?? string.Empty,
             CategoryId = source.CategoryId,
+            CategoryName = source.CategoryName,
             Title = source.Title,
             Pretitle = source.Pretitle,
             Subtitle = source.Subtitle,
@@ -53,6 +62,7 @@ public static class OpenRouterMapper
             Body = source.RawBody ?? source.Lead ?? source.Title,
             Author = source.Author,
             PublicationDate = source.PublicationDate,
+            ScrapedAt = source.ScrapedAt,
             Multimedia = [.. source.Multimedia.Select(MapMedia)],
             Warnings = warning,
             IsValid = false

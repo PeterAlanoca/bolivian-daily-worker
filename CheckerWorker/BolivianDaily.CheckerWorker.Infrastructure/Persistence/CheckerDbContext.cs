@@ -19,9 +19,14 @@ public sealed class CheckerDbContext(DbContextOptions<CheckerDbContext> options)
             entity.Property(article => article.ScrapedArticleId).HasColumnName("scraped_article_id");
             entity.Property(article => article.CategoryId).HasColumnName("category_id");
             entity.Property(article => article.SourceId).HasColumnName("source_id");
-            entity.Property(article => article.Title).HasColumnName("title").HasMaxLength(500).IsRequired();
-            entity.Property(article => article.Pretitle).HasColumnName("pretitle").HasMaxLength(500);
-            entity.Property(article => article.Subtitle).HasColumnName("subtitle").HasMaxLength(500);
+            entity.Property(article => article.SourceName).HasColumnName("source_name").HasMaxLength(100).IsRequired();
+            entity.Property(article => article.SourceUrl).HasColumnName("source_url").HasMaxLength(255).IsRequired();
+            entity.Property(article => article.ArticleUrl).HasColumnName("article_url").IsRequired();
+            entity.Property(article => article.CategoryName).HasColumnName("category_name").HasMaxLength(100);
+            entity.Property(article => article.ScrapedAt).HasColumnName("scraped_at");
+            entity.Property(article => article.Title).HasColumnName("title").IsRequired();
+            entity.Property(article => article.Pretitle).HasColumnName("pretitle");
+            entity.Property(article => article.Subtitle).HasColumnName("subtitle");
             entity.Property(article => article.Enter).HasColumnName("enter");
             entity.Property(article => article.Body).HasColumnName("body").IsRequired();
             entity.Property(article => article.Author).HasColumnName("author").HasMaxLength(250);
@@ -37,7 +42,7 @@ public sealed class CheckerDbContext(DbContextOptions<CheckerDbContext> options)
             entity.Property(article => article.SuggestedCategory).HasColumnName("suggested_category").HasMaxLength(50);
             entity.Property(article => article.NoAdvertisingPassed).HasColumnName("no_advertising_passed");
             entity.Property(article => article.NoAdvertisingReason).HasColumnName("no_advertising_reason");
-            entity.Property(article => article.DetectedNetworksJson).HasColumnName("detected_networks");
+            entity.Property(article => article.DetectedNetworks).HasColumnName("detected_networks");
             entity.Property(article => article.ReadyToPublishPassed).HasColumnName("ready_to_publish_passed");
             entity.Property(article => article.ReadyToPublishReason).HasColumnName("ready_to_publish_reason");
             entity.HasMany(article => article.Multimedia)
@@ -52,10 +57,10 @@ public sealed class CheckerDbContext(DbContextOptions<CheckerDbContext> options)
             entity.HasKey(media => media.Id);
             entity.Property(media => media.Id).HasColumnName("id");
             entity.Property(media => media.ProcessedArticleId).HasColumnName("processed_article_id");
-            entity.Property(media => media.Url).HasColumnName("url").HasMaxLength(1000).IsRequired();
-            entity.Property(media => media.Type).HasColumnName("type").HasMaxLength(100).IsRequired();
-            entity.Property(media => media.Description).HasColumnName("description").HasMaxLength(500);
-            entity.Property(media => media.Path).HasColumnName("path").HasMaxLength(1000);
+            entity.Property(media => media.Url).HasColumnName("url").IsRequired();
+            entity.Property(media => media.Type).HasColumnName("type").HasMaxLength(50).IsRequired();
+            entity.Property(media => media.Description).HasColumnName("description");
+            entity.Property(media => media.Path).HasColumnName("path").HasMaxLength(255);
         });
     }
 }

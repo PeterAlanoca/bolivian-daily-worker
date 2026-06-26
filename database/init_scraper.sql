@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS articles (
     news_source_id BIGINT,
     category_id BIGINT,
     source_category_id BIGINT,
-    url TEXT NOT NULL UNIQUE,
+    url TEXT NOT NULL,
     pretitle TEXT,
     title TEXT NOT NULL,
     subtitle TEXT,

@@ -5,6 +5,10 @@ public sealed record ArticleProcessedEvent(
     long ProcessedArticleId,
     long? CategoryId,
     long? SourceId,
+    string SourceName,
+    string SourceUrl,
+    string? ArticleUrl,
+    string? CategoryName,
     string Title,
     string? Pretitle,
     string? Subtitle,
@@ -12,6 +16,7 @@ public sealed record ArticleProcessedEvent(
     string Body,
     string? Author,
     DateTime? PublicationDate,
+    DateTime ScrapedAt,
     string State,
     IReadOnlyCollection<ArticleMediaMessage> Multimedia,
     DateTime ProcessedAt);
