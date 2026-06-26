@@ -7,69 +7,69 @@ namespace BolivianDaily.CheckerWorker.Infrastructure.Mappers;
 
 public static class OpenRouterMapper
 {
-    public static ProcessedArticle ToProcessedArticle(this ArticleValidationResponse validation, ArticleScrapedEvent source)
+    public static ProcessedArticle ToProcessedArticle(this ArticleValidationResponse articleValidationResponse, ArticleScrapedEvent articleScrapedEvent)
     {
         return new ProcessedArticle
         {
-            ScrapedArticleId = source.ArticleId,
-            SourceId = source.SourceId,
-            SourceName = source.SourceName,
-            SourceUrl = source.SourceUrl,
-            ArticleUrl = source.ArticleUrl ?? string.Empty,
-            CategoryId = source.CategoryId,
-            CategoryName = source.CategoryName,
-            Title = source.Title,
-            Pretitle = source.Pretitle,
-            Subtitle = source.Subtitle,
-            Enter = source.Lead,
-            Body = source.RawBody ?? source.Lead ?? source.Title,
-            Author = source.Author,
-            PublicationDate = source.PublicationDate,
-            ScrapedAt = source.ScrapedAt,
-            Multimedia = [.. source.Multimedia.Select(MapMedia)],
+            ScrapedArticleId = articleScrapedEvent.ArticleId,
+            SourceId = articleScrapedEvent.SourceId,
+            SourceName = articleScrapedEvent.SourceName,
+            SourceUrl = articleScrapedEvent.SourceUrl,
+            ArticleUrl = articleScrapedEvent.ArticleUrl ?? string.Empty,
+            CategoryId = articleScrapedEvent.CategoryId,
+            CategoryName = articleScrapedEvent.CategoryName,
+            Title = articleScrapedEvent.Title,
+            Pretitle = articleScrapedEvent.Pretitle,
+            Subtitle = articleScrapedEvent.Subtitle,
+            Enter = articleScrapedEvent.Lead,
+            Body = articleScrapedEvent.RawBody ?? articleScrapedEvent.Lead ?? articleScrapedEvent.Title,
+            Author = articleScrapedEvent.Author,
+            PublicationDate = articleScrapedEvent.PublicationDate,
+            ScrapedAt = articleScrapedEvent.ScrapedAt,
+            Multimedia = [.. articleScrapedEvent.Multimedia.Select(MapMedia)],
             Warnings = null,
-            IsValid = validation.IsValid,
-            HtmlFormatPassed = validation.Validations.HtmlFormat.Passed,
-            HtmlFormatReason = validation.Validations.HtmlFormat.Reason,
-            CategoryAccuracyPassed = validation.Validations.CategoryAccuracy.Passed,
-            CategoryAccuracyReason = validation.Validations.CategoryAccuracy.Reason,
-            SuggestedCategory = validation.Validations.CategoryAccuracy.SuggestedCategory,
-            NoAdvertisingPassed = validation.Validations.NoAdvertising.Passed,
-            NoAdvertisingReason = validation.Validations.NoAdvertising.Reason,
-            DetectedNetworks = validation.Validations.NoAdvertising.DetectedNetworks.Count > 0
-                ? JsonSerializer.Serialize(validation.Validations.NoAdvertising.DetectedNetworks)
+            IsValid = articleValidationResponse.IsValid,
+            HtmlFormatPassed = articleValidationResponse.Validations.HtmlFormat.Passed,
+            HtmlFormatReason = articleValidationResponse.Validations.HtmlFormat.Reason,
+            CategoryAccuracyPassed = articleValidationResponse.Validations.CategoryAccuracy.Passed,
+            CategoryAccuracyReason = articleValidationResponse.Validations.CategoryAccuracy.Reason,
+            SuggestedCategory = articleValidationResponse.Validations.CategoryAccuracy.SuggestedCategory,
+            NoAdvertisingPassed = articleValidationResponse.Validations.NoAdvertising.Passed,
+            NoAdvertisingReason = articleValidationResponse.Validations.NoAdvertising.Reason,
+            DetectedNetworks = articleValidationResponse.Validations.NoAdvertising.DetectedNetworks.Count > 0
+                ? JsonSerializer.Serialize(articleValidationResponse.Validations.NoAdvertising.DetectedNetworks)
                 : null,
-            ReadyToPublishPassed = validation.Validations.ReadyToPublish.Passed,
-            ReadyToPublishReason = validation.Validations.ReadyToPublish.Reason
+            ReadyToPublishPassed = articleValidationResponse.Validations.ReadyToPublish.Passed,
+            ReadyToPublishReason = articleValidationResponse.Validations.ReadyToPublish.Reason
         };
     }
 
-    public static ProcessedArticle ToProcessedArticle(this ArticleScrapedEvent source, string warning)
+    public static ProcessedArticle ToProcessedArticle(this ArticleScrapedEvent articleScrapedEvent, string warning)
     {
         return new ProcessedArticle
         {
-            ScrapedArticleId = source.ArticleId,
-            SourceId = source.SourceId,
-            SourceName = source.SourceName,
-            SourceUrl = source.SourceUrl,
-            ArticleUrl = source.ArticleUrl ?? string.Empty,
-            CategoryId = source.CategoryId,
-            CategoryName = source.CategoryName,
-            Title = source.Title,
-            Pretitle = source.Pretitle,
-            Subtitle = source.Subtitle,
-            Enter = source.Lead,
-            Body = source.RawBody ?? source.Lead ?? source.Title,
-            Author = source.Author,
-            PublicationDate = source.PublicationDate,
-            ScrapedAt = source.ScrapedAt,
-            Multimedia = [.. source.Multimedia.Select(MapMedia)],
+            ScrapedArticleId = articleScrapedEvent.ArticleId,
+            SourceId = articleScrapedEvent.SourceId,
+            SourceName = articleScrapedEvent.SourceName,
+            SourceUrl = articleScrapedEvent.SourceUrl,
+            ArticleUrl = articleScrapedEvent.ArticleUrl ?? string.Empty,
+            CategoryId = articleScrapedEvent.CategoryId,
+            CategoryName = articleScrapedEvent.CategoryName,
+            Title = articleScrapedEvent.Title,
+            Pretitle = articleScrapedEvent.Pretitle,
+            Subtitle = articleScrapedEvent.Subtitle,
+            Enter = articleScrapedEvent.Lead,
+            Body = articleScrapedEvent.RawBody ?? articleScrapedEvent.Lead ?? articleScrapedEvent.Title,
+            Author = articleScrapedEvent.Author,
+            PublicationDate = articleScrapedEvent.PublicationDate,
+            ScrapedAt = articleScrapedEvent.ScrapedAt,
+            Multimedia = [.. articleScrapedEvent.Multimedia.Select(MapMedia)],
             Warnings = warning,
             IsValid = false
         };
     }
 
-    public static OpenRouterChatRequest ToOpenRouterChatRequest(this ArticleScrapedEvent source, string model, string prompt)
+    public static OpenRouterChatRequest ToOpenRouterChatRequest(this ArticleScrapedEvent articleScrapedEvent, string model, string prompt)
     {
         return new OpenRouterChatRequest(
             Model: model,
@@ -77,19 +77,19 @@ public static class OpenRouterMapper
             Messages:
             [
                 new OpenRouterMessage("system", prompt),
-                new OpenRouterMessage("user", JsonSerializer.Serialize(source))
+                new OpenRouterMessage("user", JsonSerializer.Serialize(articleScrapedEvent))
             ]
         );
     }
 
-    private static ProcessedArticleMedia MapMedia(ArticleMediaMessage media)
+    private static ProcessedArticleMedia MapMedia(ArticleMediaMessage articleMediaMessage)
     {
         return new ProcessedArticleMedia
         {
-            Url = media.Url,
-            Type = media.Type,
-            Description = media.Description,
-            Path = media.Path
+            Url = articleMediaMessage.Url,
+            Type = articleMediaMessage.Type,
+            Description = articleMediaMessage.Description,
+            Path = articleMediaMessage.Path
         };
     }
 
