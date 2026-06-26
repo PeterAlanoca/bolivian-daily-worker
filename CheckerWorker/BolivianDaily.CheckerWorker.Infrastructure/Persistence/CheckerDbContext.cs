@@ -45,7 +45,7 @@ public sealed class CheckerDbContext(DbContextOptions<CheckerDbContext> options)
             entity.Property(article => article.DetectedNetworks).HasColumnName("detected_networks");
             entity.Property(article => article.ReadyToPublishPassed).HasColumnName("ready_to_publish_passed");
             entity.Property(article => article.ReadyToPublishReason).HasColumnName("ready_to_publish_reason");
-            entity.HasMany(article => article.Multimedia)
+            entity.HasMany(article => article.Media)
                 .WithOne()
                 .HasForeignKey(media => media.ProcessedArticleId)
                 .OnDelete(DeleteBehavior.Cascade);

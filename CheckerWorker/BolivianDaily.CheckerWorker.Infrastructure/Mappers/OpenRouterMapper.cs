@@ -26,7 +26,7 @@ public static class OpenRouterMapper
             Author = articleScrapedEvent.Author,
             PublicationDate = articleScrapedEvent.PublicationDate,
             ScrapedAt = articleScrapedEvent.ScrapedAt,
-            Multimedia = [.. articleScrapedEvent.Multimedia.Select(MapMedia)],
+            Media = [.. articleScrapedEvent.Media.Select(MapMedia)],
             Warnings = null,
             IsValid = articleValidationResponse.IsValid,
             HtmlFormatPassed = articleValidationResponse.Validations.HtmlFormat.Passed,
@@ -63,7 +63,7 @@ public static class OpenRouterMapper
             Author = articleScrapedEvent.Author,
             PublicationDate = articleScrapedEvent.PublicationDate,
             ScrapedAt = articleScrapedEvent.ScrapedAt,
-            Multimedia = [.. articleScrapedEvent.Multimedia.Select(MapMedia)],
+            Media = [.. articleScrapedEvent.Media.Select(MapMedia)],
             Warnings = warning,
             IsValid = false
         };

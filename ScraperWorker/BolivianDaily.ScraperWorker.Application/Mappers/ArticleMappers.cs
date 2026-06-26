@@ -22,7 +22,7 @@ public static class ArticleMappers
             RawBody: article.Body,
             Author: article.Author,
             PublicationDate: article.PublishedAt,
-            Multimedia: [.. article.Media.Select(m => new ArticleMediaMessage(m.Url, m.Type, m.Description, m.Path))],
+            Media: [.. article.Media.Select(m => new ArticleMediaMessage(m.Url, m.Type, m.Description, m.Path))],
             ScrapedAt: article.ScrapedAt);
     }
 }

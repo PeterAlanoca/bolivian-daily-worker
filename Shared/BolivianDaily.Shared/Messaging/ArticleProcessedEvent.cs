@@ -18,5 +18,5 @@ public sealed record ArticleProcessedEvent(
     DateTime? PublicationDate,
     DateTime ScrapedAt,
     string State,
-    IReadOnlyCollection<ArticleMediaMessage> Multimedia,
+    IReadOnlyCollection<ArticleMediaMessage> Media,
     DateTime ProcessedAt);

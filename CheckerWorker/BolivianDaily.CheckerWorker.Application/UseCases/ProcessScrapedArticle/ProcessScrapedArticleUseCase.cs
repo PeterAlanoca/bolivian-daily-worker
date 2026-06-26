@@ -32,7 +32,7 @@ public sealed class ProcessScrapedArticleUseCase(
             return;
         }
 
-        await eventPublisher.PublishAsync(processedArticle.AsEvent(), cancellationToken);
+        await eventPublisher.PublishAsync(processedArticle.AsScrapedEvent(), cancellationToken);
 
         logger.LogInformation(
             "Processed and published article {ArticleId} as {ProcessedArticleId}",

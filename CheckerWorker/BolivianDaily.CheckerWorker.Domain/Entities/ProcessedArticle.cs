@@ -34,5 +34,5 @@ public class ProcessedArticle
     public bool ReadyToPublishPassed { get; set; }
     public string? ReadyToPublishReason { get; set; }
 
-    public List<ProcessedArticleMedia> Multimedia { get; set; } = new();
+    public List<ProcessedArticleMedia> Media { get; set; } = new();
 }

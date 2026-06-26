@@ -15,5 +15,5 @@ public sealed record ArticleScrapedEvent(
     string? RawBody,
     string? Author,
     DateTime? PublicationDate,
-    IReadOnlyCollection<ArticleMediaMessage> Multimedia,
+    IReadOnlyCollection<ArticleMediaMessage> Media,
     DateTime ScrapedAt);

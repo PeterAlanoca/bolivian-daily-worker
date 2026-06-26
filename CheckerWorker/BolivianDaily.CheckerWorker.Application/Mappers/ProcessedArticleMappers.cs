@@ -5,7 +5,7 @@ namespace BolivianDaily.CheckerWorker.Application.Mappers;
 
 public static class ProcessedArticleMappers
 {
-    public static ArticleProcessedEvent AsEvent(this ProcessedArticle article)
+    public static ArticleProcessedEvent AsScrapedEvent(this ProcessedArticle article)
     {
         return new ArticleProcessedEvent(
             ScrapedArticleId: article.ScrapedArticleId,
@@ -25,7 +25,7 @@ public static class ProcessedArticleMappers
             PublicationDate: article.PublicationDate,
             ScrapedAt: article.ScrapedAt,
             State: article.State,
-            Multimedia: [.. article.Multimedia.Select(media => new ArticleMediaMessage(
+            Media: [.. article.Media.Select(media => new ArticleMediaMessage(
                 media.Url,
                 media.Type,
                 media.Description,
