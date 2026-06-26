@@ -8,10 +8,10 @@ using RabbitMQ.Client.Events;
 
 namespace BolivianDaily.CheckerWorker;
 
-public sealed class Worker(
+public sealed class CheckerWorker(
     IServiceProvider serviceProvider,
     IOptions<RabbitMqOptions> options,
-    ILogger<Worker> logger) : BackgroundService
+    ILogger<CheckerWorker> logger) : BackgroundService
 {
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
     private IConnection? connection;
@@ -67,7 +67,7 @@ public sealed class Worker(
 
         channel.BasicConsume(rabbitMqOptions.ArticleScrapedQueue, autoAck: false, consumer);
         logger.LogInformation("CheckerWorker consuming queue {Queue}", rabbitMqOptions.ArticleScrapedQueue);
-
+        
         return Task.CompletedTask;
     }
 

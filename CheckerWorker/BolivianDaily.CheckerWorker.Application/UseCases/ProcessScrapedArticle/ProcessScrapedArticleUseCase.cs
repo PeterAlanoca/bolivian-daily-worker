@@ -1,4 +1,5 @@
 using BolivianDaily.CheckerWorker.Application.Interfaces;
+using BolivianDaily.CheckerWorker.Application.Mappers;
 using BolivianDaily.CheckerWorker.Domain.Repositories;
 using BolivianDaily.Shared.Messaging;
 using Microsoft.Extensions.Logging;
@@ -21,10 +22,20 @@ public sealed class ProcessScrapedArticleUseCase(
 
         var processedArticle = await articleChecker.CheckAsync(message, cancellationToken);
         await processedArticleRepository.AddAsync(processedArticle, cancellationToken);
-        await eventPublisher.PublishAsync(processedArticle.ToEvent(), cancellationToken);
+
+        if (!processedArticle.IsValid)
+        {
+            logger.LogWarning(
+                "Article {ArticleId} is not valid — will not be published. Warnings: {Warnings}",
+                message.ArticleId,
+                processedArticle.Warnings);
+            return;
+        }
+
+        await eventPublisher.PublishAsync(processedArticle.AsEvent(), cancellationToken);
 
         logger.LogInformation(
-            "Processed article {ArticleId} as {ProcessedArticleId}",
+            "Processed and published article {ArticleId} as {ProcessedArticleId}",
             message.ArticleId,
             processedArticle.Id);
     }

@@ -1,5 +1,3 @@
-using BolivianDaily.Shared.Messaging;
-
 namespace BolivianDaily.CheckerWorker.Domain.Entities;
 
 public class ProcessedArticle
@@ -37,32 +35,4 @@ public class ProcessedArticle
     public string? ReadyToPublishReason { get; set; }
 
     public List<ProcessedArticleMedia> Multimedia { get; set; } = new();
-
-    public ArticleProcessedEvent ToEvent()
-    {
-        return new ArticleProcessedEvent(
-            ScrapedArticleId,
-            Id,
-            CategoryId,
-            SourceId,
-            SourceName,
-            SourceUrl,
-            ArticleUrl,
-            CategoryName,
-            Title,
-            Pretitle,
-            Subtitle,
-            Enter,
-            Body,
-            Author,
-            PublicationDate,
-            ScrapedAt,
-            State,
-            Multimedia.Select(media => new ArticleMediaMessage(
-                media.Url,
-                media.Type,
-                media.Description,
-                media.Path)).ToArray(),
-            ProcessedAt);
-    }
 }
