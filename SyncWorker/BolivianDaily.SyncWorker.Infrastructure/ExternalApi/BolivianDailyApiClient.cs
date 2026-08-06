@@ -31,7 +31,7 @@ public sealed class BolivianDailyApiClient(HttpClient httpClient, IOptions<Exter
             message.Author,
             message.PublicationDate,
             message.State,
-            message.Multimedia.Select(media => new ExternalArticleMediaRequest(media.Url, media.Type)).ToArray()));
+            message.Media.Select(media => new ExternalArticleMediaRequest(media.Url, media.Type)).ToArray()));
 
         using var response = await httpClient.SendAsync(request, cancellationToken);
         response.EnsureSuccessStatusCode();

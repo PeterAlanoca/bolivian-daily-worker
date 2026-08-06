@@ -20,7 +20,7 @@ public class JornadaScrapingWorker(
         {
             try
             {
-                logger.LogDebug("[BlackMarketPrice] Starting synchronization...");
+                logger.LogDebug("Jornada starting synchronization...");
 
                 using var scope = serviceProvider.CreateScope();
                 var useCase = scope.ServiceProvider.GetRequiredService<ScrapeSourceUseCase>();
