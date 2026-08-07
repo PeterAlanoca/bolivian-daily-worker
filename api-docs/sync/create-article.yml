@@ -1,5 +1,5 @@
 info:
-  name: Registrar Articulo de Noticia
+  name: Register News Article
   type: http
   seq: 3
 
@@ -13,9 +13,9 @@ http:
     type: json
     data: |-
       {
-        "title": "Nuevo sistema de transporte en La Paz",
-        "summary": "Se implementara una nueva plataforma digital",
-        "content": "El proyecto permitira mejorar el seguimiento de unidades de transporte.",
+        "title": "New public transport system in La Paz",
+        "summary": "A new digital platform will be implemented",
+        "content": "The project will improve tracking of transport units.",
         "image_url": "https://example.com/news/image.jpg",
         "category": "Tecnologia",
         "published_date": "2026-08-06T20:30:00Z"
@@ -25,18 +25,18 @@ http:
     token: '{{accessToken}}'
 
 docs: |-
-  POST `{{apiBaseUrl}}/api/news/articles` (requiere Bearer Token)
+  POST `{{apiBaseUrl}}/api/news/articles` (requires Bearer Token)
 
-  Registra un articulo de noticia. Autenticacion: `Authorization: Bearer <access_token>`.
-  Ejecuta `Login` primero: su script after-response rellena `{{accessToken}}`
-  (equivale al `$ACCESS_TOKEN` del ejemplo con variable).
+  Registers a news article. Authentication: `Authorization: Bearer <access_token>`.
+  Run `Login` first: its after-response script populates `{{accessToken}}`
+  (equivalent to the `$ACCESS_TOKEN` variable example).
 
-  Campos del body:
-  - `title`: titulo del articulo
-  - `summary`: resumen breve
-  - `content`: contenido completo
-  - `image_url`: URL de la imagen principal (opcional)
-  - `category`: categoria (Tecnologia, General, ...)
-  - `published_date`: fecha de publicacion ISO 8601
+  Body fields:
+  - `title`: article title
+  - `summary`: short summary
+  - `content`: full content
+  - `image_url`: main image URL (optional)
+  - `category`: category (Tecnologia, General, ...)
+  - `published_date`: publication date ISO 8601
 
-  Respuesta esperada: 201 Created con el articulo creado.
+  Expected response: 201 Created with the created article.

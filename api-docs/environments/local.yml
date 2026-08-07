@@ -4,34 +4,34 @@ variables:
     value: https://openrouter.ai/api/v1
     enabled: true
     secret: false
-    description: Base URL de OpenRouter (SaaS, misma en todos los entornos)
+    description: OpenRouter base URL (SaaS, same across all environments)
   - name: openRouterApiKey
     value: '{{process.env.OPENROUTER_API_KEY}}'
     enabled: true
     secret: false
-    description: API key de OpenRouter (resuelta desde .env, gitignored)
+    description: OpenRouter API key (resolved from .env, gitignored)
   - name: apiBaseUrl
     value: https://0240-2800-320-c952-1400-25e2-358a-c9f1-a370.ngrok-free.app
     enabled: true
     secret: false
-    description: Base URL de la API BolivianDaily (dummy)
+    description: BolivianDaily API base URL (dummy)
   - name: loginUsername
     value: peter
     enabled: true
     secret: false
-    description: Usuario de login (dummy)
+    description: Login username (dummy)
   - name: loginPassword
     value: '123456'
     enabled: true
     secret: false
-    description: Password de login (dummy)
+    description: Login password (dummy)
   - name: accessToken
     value: ''
     enabled: true
     secret: false
-    description: JWT de acceso; se rellena automaticamente al ejecutar Login
+    description: Access JWT; populated automatically when Login runs
   - name: refreshToken
     value: ''
     enabled: true
     secret: false
-    description: JWT de refresco; se rellena automaticamente al ejecutar Login
+    description: Refresh JWT; populated automatically when Login runs

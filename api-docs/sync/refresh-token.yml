@@ -27,10 +27,10 @@ runtime:
 docs: |-
   POST `{{apiBaseUrl}}/api/auth/refresh`
 
-  Renueva el `access_token` expirado usando el `refresh_token` obtenido en Login.
-  El script after-response actualiza `accessToken` automaticamente.
+  Renews an expired `access_token` using the `refresh_token` obtained from Login.
+  The after-response script updates `accessToken` automatically.
 
-  Respuesta esperada (200 OK):
+  Expected response (200 OK):
 
   ```json
   {
@@ -40,4 +40,4 @@ docs: |-
   }
   ```
 
-  Requisito: ejecutar `Login` antes para tener `{{refreshToken}}` poblado.
+  Requirement: run `Login` first so `{{refreshToken}}` is populated.

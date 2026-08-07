@@ -29,11 +29,11 @@ runtime:
 docs: |-
   POST `{{apiBaseUrl}}/api/auth/login`
 
-  Autenticacion en la API BolivianDaily. Devuelve los JWT:
-  - `access_token`: Bearer para llamar a `/api/news/articles`
-  - `refresh_token`: para renovar el access token
+  Authenticates against the BolivianDaily API. Returns the JWT pair:
+  - `access_token`: Bearer token to call `/api/news/articles`
+  - `refresh_token`: to renew the access token
 
-  Respuesta esperada (200 OK):
+  Expected response (200 OK):
 
   ```json
   {
@@ -44,6 +44,6 @@ docs: |-
   }
   ```
 
-  El script after-response guarda ambos tokens en variables runtime
-  (`accessToken` / `refreshToken`), que tienen la precedencia mas alta y se
-  reutilizan en los requests siguientes (equivale al `$ACCESS_TOKEN` del ejemplo).
+  The after-response script stores both tokens in runtime variables
+  (`accessToken` / `refreshToken`), which have the highest precedence and are
+  reused by subsequent requests (equivalent to the `$ACCESS_TOKEN` example).
