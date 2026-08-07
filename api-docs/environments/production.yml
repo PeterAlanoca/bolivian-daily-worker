@@ -1,0 +1,37 @@
+name: Production
+variables:
+  - name: openRouterBaseUrl
+    value: https://openrouter.ai/api/v1
+    enabled: true
+    secret: false
+    description: Base URL de OpenRouter (SaaS, misma en todos los entornos)
+  - name: openRouterApiKey
+    value: '{{process.env.OPENROUTER_API_KEY}}'
+    enabled: true
+    secret: false
+    description: API key de OpenRouter (resuelta desde .env, gitignored)
+  - name: apiBaseUrl
+    value: https://api.example.com
+    enabled: true
+    secret: false
+    description: Base URL de la API BolivianDaily (dummy)
+  - name: loginUsername
+    value: peter
+    enabled: true
+    secret: false
+    description: Usuario de login (dummy)
+  - name: loginPassword
+    value: '123456'
+    enabled: true
+    secret: false
+    description: Password de login (dummy)
+  - name: accessToken
+    value: ''
+    enabled: true
+    secret: false
+    description: JWT de acceso; se rellena automaticamente al ejecutar Login
+  - name: refreshToken
+    value: ''
+    enabled: true
+    secret: false
+    description: JWT de refresco; se rellena automaticamente al ejecutar Login

@@ -1,0 +1,43 @@
+info:
+  name: Refresh Token
+  type: http
+  seq: 2
+
+http:
+  method: POST
+  url: '{{apiBaseUrl}}/api/auth/refresh'
+  headers:
+    - name: Content-Type
+      value: application/json
+  body:
+    type: json
+    data: |-
+      {
+        "refresh_token": "{{refreshToken}}"
+      }
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        if (res.status === 200 && res.body.access_token) {
+          bru.setVar("accessToken", res.body.access_token);
+        }
+
+docs: |-
+  POST `{{apiBaseUrl}}/api/auth/refresh`
+
+  Renueva el `access_token` expirado usando el `refresh_token` obtenido en Login.
+  El script after-response actualiza `accessToken` automaticamente.
+
+  Respuesta esperada (200 OK):
+
+  ```json
+  {
+    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6...",
+    "token_type": "Bearer",
+    "expires_in": 3600
+  }
+  ```
+
+  Requisito: ejecutar `Login` antes para tener `{{refreshToken}}` poblado.

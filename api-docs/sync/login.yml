@@ -1,0 +1,49 @@
+info:
+  name: Login
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: '{{apiBaseUrl}}/api/auth/login'
+  headers:
+    - name: Content-Type
+      value: application/json
+  body:
+    type: json
+    data: |-
+      {
+        "username": "{{loginUsername}}",
+        "password": "{{loginPassword}}"
+      }
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        if (res.status === 200 && res.body.access_token) {
+          bru.setVar("accessToken", res.body.access_token);
+          bru.setVar("refreshToken", res.body.refresh_token);
+        }
+
+docs: |-
+  POST `{{apiBaseUrl}}/api/auth/login`
+
+  Autenticacion en la API BolivianDaily. Devuelve los JWT:
+  - `access_token`: Bearer para llamar a `/api/news/articles`
+  - `refresh_token`: para renovar el access token
+
+  Respuesta esperada (200 OK):
+
+  ```json
+  {
+    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6...",
+    "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6...",
+    "token_type": "Bearer",
+    "expires_in": 3600
+  }
+  ```
+
+  El script after-response guarda ambos tokens en variables runtime
+  (`accessToken` / `refreshToken`), que tienen la precedencia mas alta y se
+  reutilizan en los requests siguientes (equivale al `$ACCESS_TOKEN` del ejemplo).

@@ -1,0 +1,42 @@
+info:
+  name: Registrar Articulo de Noticia
+  type: http
+  seq: 3
+
+http:
+  method: POST
+  url: '{{apiBaseUrl}}/api/news/articles'
+  headers:
+    - name: Content-Type
+      value: application/json
+  body:
+    type: json
+    data: |-
+      {
+        "title": "Nuevo sistema de transporte en La Paz",
+        "summary": "Se implementara una nueva plataforma digital",
+        "content": "El proyecto permitira mejorar el seguimiento de unidades de transporte.",
+        "image_url": "https://example.com/news/image.jpg",
+        "category": "Tecnologia",
+        "published_date": "2026-08-06T20:30:00Z"
+      }
+  auth:
+    type: bearer
+    token: '{{accessToken}}'
+
+docs: |-
+  POST `{{apiBaseUrl}}/api/news/articles` (requiere Bearer Token)
+
+  Registra un articulo de noticia. Autenticacion: `Authorization: Bearer <access_token>`.
+  Ejecuta `Login` primero: su script after-response rellena `{{accessToken}}`
+  (equivale al `$ACCESS_TOKEN` del ejemplo con variable).
+
+  Campos del body:
+  - `title`: titulo del articulo
+  - `summary`: resumen breve
+  - `content`: contenido completo
+  - `image_url`: URL de la imagen principal (opcional)
+  - `category`: categoria (Tecnologia, General, ...)
+  - `published_date`: fecha de publicacion ISO 8601
+
+  Respuesta esperada: 201 Created con el articulo creado.
