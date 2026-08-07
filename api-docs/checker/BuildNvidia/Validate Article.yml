@@ -15,7 +15,7 @@ http:
     type: json
     data: |-
       {
-        "model": "openai/gpt-oss-120b",
+        "model": "minimaxai/minimax-m3",
         "messages": [
           {
             "role": "system",
