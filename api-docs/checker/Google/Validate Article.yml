@@ -1,0 +1,77 @@
+info:
+  name: Validate Article
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{googleBaseUrl}}/chat/completions"
+  headers:
+    - name: Accept
+      value: application/json
+    - name: Content-Type
+      value: application/json
+  body:
+    type: json
+    data: |-
+      {
+        "model": "gemini-3.5-flash",
+        "temperature": 0,
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are a news article quality validator for Bolivian newspapers. Validate the article JSON: 1) RawBody must be valid HTML using proper tags (<p>, <h1>, <ul>, <img>). 2) CategoryName must match content using the most specific category (ECONOMIA, INTERNACIONAL, SEGURIDAD, SOCIEDAD, CULTURA, TECNOLOGIA, DEPORTES, SALUD, INTERESANTE, NACIONAL as fallback). 3) RawBody must not contain ad networks (Google Ads/AdSense, Taboola, Outbrain, Amazon Ads, Facebook Ads). 4) Evaluate if the article is ready to publish. Respond ONLY with JSON: {\"articleId\":12345,\"isValid\":true,\"validations\":{\"htmlFormat\":{\"passed\":true,\"reason\":\"ok\"},\"categoryAccuracy\":{\"passed\":true,\"reason\":\"ok\",\"suggestedCategory\":null},\"noAdvertising\":{\"passed\":true,\"reason\":\"ok\",\"detectedNetworks\":[]},\"readyToPublish\":{\"passed\":true,\"reason\":\"ok\"}}}"
+          },
+          {
+            "role": "user",
+            "content": "{\"articleId\":12345,\"sourceId\":1,\"sourceName\":\"Jornada\",\"sourceUrl\":\"https://jornada.com.bo\",\"articleUrl\":\"https://jornada.com.bo/noticia/estudiantes-feria-ciencia\",\"categoryId\":3,\"categoryName\":\"SOCIEDAD\",\"pretitle\":null,\"title\":\"Estudiantes de La Paz ganan feria de ciencia\",\"subtitle\":\"El evento reunio a mas de 200 proyectos\",\"lead\":\"La feria se realizo en el campo ferial del Bicentenario.\",\"rawBody\":\"<p>La feria de ciencias reunio a estudiantes de toda La Paz.</p><p>El jurado destaco el proyecto de energias renovables.</p>\",\"author\":\"Redaccion\",\"publicationDate\":\"2026-08-05T10:30:00-04:00\",\"media\":[{\"url\":\"https://jornada.com.bo/img/12345.jpg\",\"type\":\"image\",\"description\":\"Estudiantes en la feria\",\"path\":null}],\"scrapedAt\":\"2026-08-05T10:35:00-04:00\"}"
+          }
+        ]
+      }
+  auth:
+    type: bearer
+    token: "{{googleApiKey}}"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs: |-
+  POST `{{googleBaseUrl}}/chat/completions` (Google Gemini API)
+
+  Valida un articulo con el modelo `gemini-2.5-flash` via la API de Gemini.
+  - `/v1beta/chat/completions` es el endpoint OpenAI-compatible de la API de Gemini
+    (el endpoint nativo usa `generationConfig`, pero aqui `temperature` a nivel raiz funciona).
+  - Auth: `Authorization: Bearer <GEMINI_API_KEY>` (variable `{{googleApiKey}}`).
+  - La peticion replica el request de `Checker/OpenRouter/Validate Article.yml`:
+      model = `gemini-2.5-flash`, temperature = 0,
+      messages = [{ role: "system", content: <prompt validador> }, { role: "user", content: <ArticleScrapedEvent serializado como JSON string> }].
+  - El `content` del usuario SIEMPRE es un JSON serializado dentro de un string (escapado).
+
+  Respuesta esperada (200 OK):
+
+  ```json
+  {
+    "id": "chatcmpl-xxxx",
+    "object": "chat.completion",
+    "created": 1780000000,
+    "model": "gemini-2.5-flash",
+    "choices": [
+      {
+        "index": 0,
+        "finish_reason": "stop",
+        "message": {
+          "role": "assistant",
+          "content": "{\"articleId\":12345,\"isValid\":true,\"validations\":{\"htmlFormat\":{\"passed\":true,\"reason\":\"El body contiene HTML valido\"},\"categoryAccuracy\":{\"passed\":true,\"reason\":\"SOCIEDAD es correcto\",\"suggestedCategory\":null},\"noAdvertising\":{\"passed\":true,\"reason\":\"No se detectaron redes de publicidad\",\"detectedNetworks\":[]},\"readyToPublish\":{\"passed\":true,\"reason\":\"Listo para publicar\"}}}"
+        }
+      }
+    ],
+    "usage": { "prompt_tokens": 950, "completion_tokens": 140, "total_tokens": 1090 }
+  }
+  ```
+
+  Nota: `choices[0].message.content` es un JSON deserializable a `ArticleValidationResponse`:
+  `{ articleId, isValid, validations: { htmlFormat, categoryAccuracy, noAdvertising, readyToPublish } }`.
+  Si content es vacio/invalido o `isValid = false`, el CheckerWorker marca `ProcessedArticle` con warning.

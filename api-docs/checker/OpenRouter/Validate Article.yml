@@ -1,5 +1,5 @@
 info:
-  name: Validate Article (chat/completions)
+  name: Validate Article
   type: http
   seq: 1
 

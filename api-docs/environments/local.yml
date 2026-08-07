@@ -10,6 +10,46 @@ variables:
     enabled: true
     secret: false
     description: OpenRouter API key (resolved from .env, gitignored)
+  - name: nvidiaBaseUrl
+    value: https://integrate.api.nvidia.com/v1
+    enabled: true
+    secret: false
+    description: NVIDIA NIM API base URL (SaaS, same across all environments)
+  - name: nvidiaApiKey
+    value: '{{process.env.NVIDIA_API_KEY}}'
+    enabled: true
+    secret: false
+    description: NVIDIA API key (resolved from system environment variable, gitignored)
+  - name: tokenRouterBaseUrl
+    value: https://api.tokenrouter.com/v1
+    enabled: true
+    secret: false
+    description: TokenRouter base URL (SaaS, same across all environments)
+  - name: tokenRouterApiKey
+    value: '{{process.env.TOKENROUTER_API_KEY}}'
+    enabled: true
+    secret: false
+    description: TokenRouter API key (resolved from .env, gitignored)
+  - name: googleBaseUrl
+    value: https://generativelanguage.googleapis.com/v1beta
+    enabled: true
+    secret: false
+    description: Google Gemini API base URL (SaaS, same across all environments)
+  - name: googleApiKey
+    value: '{{process.env.GEMINI_API_KEY}}'
+    enabled: true
+    secret: false
+    description: Google Gemini API key (resolved from .env, gitignored)
+  - name: groqBaseUrl
+    value: https://api.groq.com/openai/v1
+    enabled: true
+    secret: false
+    description: Groq API base URL (SaaS, same across all environments)
+  - name: groqApiKey
+    value: '{{process.env.GROQ_API_KEY}}'
+    enabled: true
+    secret: false
+    description: Groq API key (resolved from .env, gitignored)
   - name: apiBaseUrl
     value: https://0240-2800-320-c952-1400-25e2-358a-c9f1-a370.ngrok-free.app
     enabled: true

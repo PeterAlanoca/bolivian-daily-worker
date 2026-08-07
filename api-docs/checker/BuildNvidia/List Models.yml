@@ -1,0 +1,27 @@
+info:
+  name: List Models
+  type: http
+  seq: 2
+
+http:
+  method: GET
+  url: "{{nvidiaBaseUrl}}/models"
+  headers:
+    - name: Accept
+      value: application/json
+  auth:
+    type: bearer
+    token: "{{nvidiaApiKey}}"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs: |-
+  GET `{{nvidiaBaseUrl}}/models`
+
+  Lista los modelos realmente disponibles en la API hosted de NVIDIA
+  (el catalogo estatico de docs.api.nvidia.com esta desactualizado:
+  DeepSeek V4 flash y pro ya dieron EOL el 2026-08-07).
