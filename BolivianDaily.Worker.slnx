@@ -5,12 +5,6 @@
     <Project Path="CheckerWorker/BolivianDaily.CheckerWorker.Infrastructure/BolivianDaily.CheckerWorker.Infrastructure.csproj" Id="b8a159d2-4d42-4c76-bd29-8dd23c304286" />
     <Project Path="CheckerWorker/BolivianDaily.CheckerWorker/BolivianDaily.CheckerWorker.csproj" Id="21980a53-4d43-44eb-a844-d648bf6d7bd5" />
   </Folder>
-  <Folder Name="/old-deprecated/">
-    <Project Path="old-deprecated/BolivianDaily.Application/BolivianDaily.Application.csproj" />
-    <Project Path="old-deprecated/BolivianDaily.Domain/BolivianDaily.Domain.csproj" />
-    <Project Path="old-deprecated/BolivianDaily.Infrastructure/BolivianDaily.Infrastructure.csproj" />
-    <Project Path="old-deprecated/BolivianDaily.Worker/BolivianDaily.Worker.csproj" />
-  </Folder>
   <Folder Name="/Shared/">
     <Project Path="Shared/BolivianDaily.Shared/BolivianDaily.Shared.csproj" />
   </Folder>
