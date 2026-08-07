@@ -50,6 +50,16 @@ variables:
     enabled: true
     secret: false
     description: Groq API key (resolved from .env, gitignored)
+  - name: deepseekBaseUrl
+    value: https://api.deepseek.com/v1
+    enabled: true
+    secret: false
+    description: DeepSeek API base URL (SaaS, same across all environments)
+  - name: deepseekApiKey
+    value: '{{process.env.DEEPSEEK_API_KEY}}'
+    enabled: true
+    secret: false
+    description: DeepSeek API key (resolved from .env, gitignored)
   - name: apiBaseUrl
     value: https://0240-2800-320-c952-1400-25e2-358a-c9f1-a370.ngrok-free.app
     enabled: true
