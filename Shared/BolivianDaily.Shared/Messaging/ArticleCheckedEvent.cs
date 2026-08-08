@@ -1,8 +1,8 @@
 namespace BolivianDaily.Shared.Messaging;
 
-public sealed record ArticleProcessedEvent(
+public sealed record ArticleCheckedEvent(
     long ScrapedArticleId,
-    long ProcessedArticleId,
+    long CheckedArticleId,
     long? CategoryId,
     long? SourceId,
     string SourceName,
@@ -19,4 +19,4 @@ public sealed record ArticleProcessedEvent(
     DateTime ScrapedAt,
     string State,
     IReadOnlyCollection<ArticleMediaMessage> Media,
-    DateTime ProcessedAt);
+    DateTime CheckedAt);

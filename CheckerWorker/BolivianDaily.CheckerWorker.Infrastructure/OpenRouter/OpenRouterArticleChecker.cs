@@ -14,7 +14,7 @@ public sealed class OpenRouterArticleChecker(
     HttpClient httpClient,
     IOptions<OpenRouterOptions> options) : IArticleChecker
 {
-    public async Task<ProcessedArticle> CheckAsync(ArticleScrapedEvent message, CancellationToken cancellationToken = default)
+    public async Task<CheckedArticle> CheckAsync(ArticleScrapedEvent message, CancellationToken cancellationToken = default)
     {
         var openRouterChatReques = message.ToOpenRouterChatRequest(
             model: options.Value.Model,
@@ -27,23 +27,23 @@ public sealed class OpenRouterArticleChecker(
 
         if (string.IsNullOrWhiteSpace(content))
         {
-            return message.ToProcessedArticle("OpenRouter returned an empty response");
+            return message.ToCheckedArticle("OpenRouter returned an empty response");
         }
 
         var articleValidationResponse = JsonSerializer.Deserialize<ArticleValidationResponse>(content);
         if (articleValidationResponse is null)
         {
-            return message.ToProcessedArticle("OpenRouter returned an unparseable response");
+            return message.ToCheckedArticle("OpenRouter returned an unparseable response");
         }
 
         if (!articleValidationResponse.IsValid)
         {
-            var fallback = articleValidationResponse.ToProcessedArticle(message);
+            var fallback = articleValidationResponse.ToCheckedArticle(message);
             fallback.Warnings ??= "Article failed AI validation";
             return fallback;
         }
 
-        return articleValidationResponse.ToProcessedArticle(message);
+        return articleValidationResponse.ToCheckedArticle(message);
     }
 
 }

@@ -2,8 +2,9 @@ using BolivianDaily.CheckerWorker.Domain.Entities;
 
 namespace BolivianDaily.CheckerWorker.Domain.Repositories;
 
-public interface IProcessedArticleRepository
+public interface ICheckedArticleRepository
 {
     Task<bool> ExistsForScrapedArticleAsync(long scrapedArticleId, CancellationToken cancellationToken = default);
-    Task AddAsync(ProcessedArticle article, CancellationToken cancellationToken = default);
+
+    Task AddAsync(CheckedArticle article, CancellationToken cancellationToken = default);
 }

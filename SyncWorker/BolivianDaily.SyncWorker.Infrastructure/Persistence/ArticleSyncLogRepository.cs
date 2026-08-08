@@ -6,10 +6,10 @@ namespace BolivianDaily.SyncWorker.Infrastructure.Persistence;
 
 public sealed class ArticleSyncLogRepository(SyncDbContext context) : IArticleSyncLogRepository
 {
-    public Task<bool> IsSyncedAsync(long processedArticleId, CancellationToken cancellationToken = default)
+    public Task<bool> IsSyncedAsync(long checkedArticleId, CancellationToken cancellationToken = default)
     {
         return context.ArticleSyncLogs.AnyAsync(
-            log => log.ProcessedArticleId == processedArticleId && log.Status == "Synced",
+            log => log.CheckedArticleId == checkedArticleId && log.Status == "Synced",
             cancellationToken);
     }
 

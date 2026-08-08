@@ -1,6 +1,6 @@
 namespace BolivianDaily.CheckerWorker.Domain.Entities;
 
-public class ProcessedArticle
+public class CheckedArticle
 {
     public long Id { get; set; }
     public long ScrapedArticleId { get; set; }
@@ -19,7 +19,7 @@ public class ProcessedArticle
     public DateTime? PublicationDate { get; set; }
     public DateTime ScrapedAt { get; set; }
     public string State { get; set; } = "A";
-    public DateTime ProcessedAt { get; set; } = DateTime.UtcNow;
+    public DateTime CheckedAt { get; set; } = DateTime.UtcNow;
     public string? Warnings { get; set; }
 
     public bool IsValid { get; set; }
@@ -34,5 +34,5 @@ public class ProcessedArticle
     public bool ReadyToPublishPassed { get; set; }
     public string? ReadyToPublishReason { get; set; }
 
-    public List<ProcessedArticleMedia> Media { get; set; } = new();
+    public List<CheckedArticleMedia> Media { get; set; } = new();
 }

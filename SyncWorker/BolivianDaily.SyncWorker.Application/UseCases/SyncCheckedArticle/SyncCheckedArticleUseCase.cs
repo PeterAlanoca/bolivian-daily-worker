@@ -4,24 +4,24 @@ using BolivianDaily.SyncWorker.Domain.Entities;
 using BolivianDaily.SyncWorker.Domain.Repositories;
 using Microsoft.Extensions.Logging;
 
-namespace BolivianDaily.SyncWorker.Application.UseCases.SyncProcessedArticle;
+namespace BolivianDaily.SyncWorker.Application.UseCases.SyncCheckedArticle;
 
-public sealed class SyncProcessedArticleUseCase(
+public sealed class SyncCheckedArticleUseCase(
     IExternalNewsApiClient apiClient,
     IArticleSyncLogRepository repository,
-    ILogger<SyncProcessedArticleUseCase> logger)
+    ILogger<SyncCheckedArticleUseCase> logger)
 {
-    public async Task ExecuteAsync(ArticleProcessedEvent message, CancellationToken cancellationToken = default)
+    public async Task ExecuteAsync(ArticleCheckedEvent message, CancellationToken cancellationToken = default)
     {
-        if (await repository.IsSyncedAsync(message.ProcessedArticleId, cancellationToken))
+        if (await repository.IsSyncedAsync(message.CheckedArticleId, cancellationToken))
         {
-            logger.LogInformation("Processed article {ProcessedArticleId} was already synced", message.ProcessedArticleId);
+            logger.LogInformation("Checked article {CheckedArticleId} was already synced", message.CheckedArticleId);
             return;
         }
 
         var syncLog = new ArticleSyncLog
         {
-            ProcessedArticleId = message.ProcessedArticleId,
+            CheckedArticleId = message.CheckedArticleId,
             ScrapedArticleId = message.ScrapedArticleId,
             Attempts = 1
         };
@@ -41,6 +41,6 @@ public sealed class SyncProcessedArticleUseCase(
         }
 
         await repository.AddAsync(syncLog, cancellationToken);
-        logger.LogInformation("Synced processed article {ProcessedArticleId}", message.ProcessedArticleId);
+        logger.LogInformation("Synced checked article {CheckedArticleId}", message.CheckedArticleId);
     }
 }

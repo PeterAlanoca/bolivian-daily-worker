@@ -24,6 +24,7 @@ public static class InfrastructureServiceExtensions
 
         services.Configure<JornadaOptions>(configuration.GetSection(JornadaOptions.SectionName));
         services.Configure<ElDiarioOptions>(configuration.GetSection(ElDiarioOptions.SectionName));
+        services.Configure<RabbitMqOptions>(configuration.GetSection(RabbitMqOptions.SectionName));
 
         services.AddSingleton(typeof(INewsSourceOptionsProvider<>), typeof(NewsSourceOptionsProvider<>));
 
@@ -47,7 +48,8 @@ public static class InfrastructureServiceExtensions
                 HostName = opts.HostName,
                 Port = opts.Port,
                 UserName = opts.UserName,
-                Password = opts.Password
+                Password = opts.Password,
+                DispatchConsumersAsync = true
             };
         });
 

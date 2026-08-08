@@ -5,14 +5,14 @@ namespace BolivianDaily.CheckerWorker.Infrastructure.Persistence;
 
 public sealed class CheckerDbContext(DbContextOptions<CheckerDbContext> options) : DbContext(options)
 {
-    public DbSet<ProcessedArticle> ProcessedArticles => Set<ProcessedArticle>();
-    public DbSet<ProcessedArticleMedia> ProcessedArticleMedia => Set<ProcessedArticleMedia>();
+    public DbSet<CheckedArticle> CheckedArticles => Set<CheckedArticle>();
+    public DbSet<CheckedArticleMedia> CheckedArticleMedia => Set<CheckedArticleMedia>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<ProcessedArticle>(entity =>
+        modelBuilder.Entity<CheckedArticle>(entity =>
         {
-            entity.ToTable("processed_articles");
+            entity.ToTable("checked_articles");
             entity.HasKey(article => article.Id);
             entity.Property(article => article.Id).HasColumnName("id");
             entity.HasIndex(article => article.ScrapedArticleId).IsUnique();
@@ -32,7 +32,7 @@ public sealed class CheckerDbContext(DbContextOptions<CheckerDbContext> options)
             entity.Property(article => article.Author).HasColumnName("author").HasMaxLength(250);
             entity.Property(article => article.PublicationDate).HasColumnName("publication_date");
             entity.Property(article => article.State).HasColumnName("state").HasMaxLength(1).HasDefaultValue("A");
-            entity.Property(article => article.ProcessedAt).HasColumnName("processed_at");
+            entity.Property(article => article.CheckedAt).HasColumnName("checked_at");
             entity.Property(article => article.Warnings).HasColumnName("warnings");
             entity.Property(article => article.IsValid).HasColumnName("is_valid");
             entity.Property(article => article.HtmlFormatPassed).HasColumnName("html_format_passed");
@@ -47,16 +47,16 @@ public sealed class CheckerDbContext(DbContextOptions<CheckerDbContext> options)
             entity.Property(article => article.ReadyToPublishReason).HasColumnName("ready_to_publish_reason");
             entity.HasMany(article => article.Media)
                 .WithOne()
-                .HasForeignKey(media => media.ProcessedArticleId)
+                .HasForeignKey(media => media.CheckedArticleId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
-        modelBuilder.Entity<ProcessedArticleMedia>(entity =>
+        modelBuilder.Entity<CheckedArticleMedia>(entity =>
         {
-            entity.ToTable("processed_article_media");
+            entity.ToTable("checked_article_media");
             entity.HasKey(media => media.Id);
             entity.Property(media => media.Id).HasColumnName("id");
-            entity.Property(media => media.ProcessedArticleId).HasColumnName("processed_article_id");
+            entity.Property(media => media.CheckedArticleId).HasColumnName("checked_article_id");
             entity.Property(media => media.Url).HasColumnName("url").IsRequired();
             entity.Property(media => media.Type).HasColumnName("type").HasMaxLength(50).IsRequired();
             entity.Property(media => media.Description).HasColumnName("description");

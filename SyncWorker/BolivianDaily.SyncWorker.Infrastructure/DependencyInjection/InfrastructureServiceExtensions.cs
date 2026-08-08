@@ -7,6 +7,8 @@ using BolivianDaily.SyncWorker.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using RabbitMQ.Client;
 
 namespace BolivianDaily.SyncWorker.Infrastructure.DependencyInjection;
 
@@ -22,6 +24,25 @@ public static class InfrastructureServiceExtensions
 
         services.AddScoped<IArticleSyncLogRepository, ArticleSyncLogRepository>();
         services.AddHttpClient<IExternalNewsApiClient, BolivianDailyApiClient>();
+
+        services.AddSingleton<ConnectionFactory>(sp =>
+        {
+            var opts = sp.GetRequiredService<IOptions<RabbitMqOptions>>().Value;
+            return new ConnectionFactory
+            {
+                HostName = opts.HostName,
+                Port = opts.Port,
+                UserName = opts.UserName,
+                Password = opts.Password,
+                DispatchConsumersAsync = true
+            };
+        });
+
+        services.AddSingleton<IConnection>(sp =>
+        {
+            var factory = sp.GetRequiredService<ConnectionFactory>();
+            return factory.CreateConnection();
+        });
 
         return services;
     }

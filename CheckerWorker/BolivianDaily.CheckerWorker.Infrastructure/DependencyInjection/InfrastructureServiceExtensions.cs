@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using RabbitMQ.Client;
 
 namespace BolivianDaily.CheckerWorker.Infrastructure.DependencyInjection;
 
@@ -23,8 +24,27 @@ public static class InfrastructureServiceExtensions
         services.AddDbContext<CheckerDbContext>(options =>
             options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
-        services.AddScoped<IProcessedArticleRepository, SqlProcessedArticleRepository>();
-        services.AddScoped<IArticleProcessedEventPublisher, RabbitMqArticleProcessedEventPublisher>();
+        services.AddScoped<ICheckedArticleRepository, SqlCheckedArticleRepository>();
+        services.AddScoped<IArticleCheckedEventPublisher, RabbitMqArticleCheckedEventPublisher>();
+
+        services.AddSingleton<ConnectionFactory>(sp =>
+        {
+            var opts = sp.GetRequiredService<IOptions<RabbitMqOptions>>().Value;
+            return new ConnectionFactory
+            {
+                HostName = opts.HostName,
+                Port = opts.Port,
+                UserName = opts.UserName,
+                Password = opts.Password,
+                DispatchConsumersAsync = true
+            };
+        });
+
+        services.AddSingleton<IConnection>(sp =>
+        {
+            var factory = sp.GetRequiredService<ConnectionFactory>();
+            return factory.CreateConnection();
+        });
 
         services.AddHttpClient<IArticleChecker, OpenRouterArticleChecker>((sp, client) =>
         {

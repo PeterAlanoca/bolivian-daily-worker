@@ -3,7 +3,7 @@ namespace BolivianDaily.SyncWorker.Domain.Entities;
 public class ArticleSyncLog
 {
     public long Id { get; set; }
-    public long ProcessedArticleId { get; set; }
+    public long CheckedArticleId { get; set; }
     public long ScrapedArticleId { get; set; }
     public string Status { get; set; } = "Pending";
     public int Attempts { get; set; }

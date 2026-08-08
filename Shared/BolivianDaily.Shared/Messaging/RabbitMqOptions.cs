@@ -10,7 +10,8 @@ public sealed class RabbitMqOptions
     public string Password { get; set; } = "guest";
     public string Exchange { get; set; } = "bolivian-daily.articles";
     public string ArticleScrapedQueue { get; set; } = "checker.article-scraped";
-    public string ArticleProcessedQueue { get; set; } = "sync.article-processed";
+    public string ArticleCheckedQueue { get; set; } = "sync.article-checked";
     public string ArticleScrapedRoutingKey { get; set; } = "article.scraped";
-    public string ArticleProcessedRoutingKey { get; set; } = "article.processed";
+    public string ArticleCheckedRoutingKey { get; set; } = "article.checked";
+    public int MaxRetries { get; set; } = 3;
 }

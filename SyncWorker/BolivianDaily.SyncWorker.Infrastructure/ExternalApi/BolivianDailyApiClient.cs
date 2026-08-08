@@ -9,7 +9,7 @@ namespace BolivianDaily.SyncWorker.Infrastructure.ExternalApi;
 
 public sealed class BolivianDailyApiClient(HttpClient httpClient, IOptions<ExternalApiOptions> options) : IExternalNewsApiClient
 {
-    public async Task<string?> SendAsync(ArticleProcessedEvent message, CancellationToken cancellationToken = default)
+    public async Task<string?> SendAsync(ArticleCheckedEvent message, CancellationToken cancellationToken = default)
     {
         var externalApiOptions = options.Value;
         if (string.IsNullOrWhiteSpace(externalApiOptions.Url))

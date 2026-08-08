@@ -4,18 +4,18 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BolivianDaily.CheckerWorker.Infrastructure.Persistence;
 
-public sealed class SqlProcessedArticleRepository(CheckerDbContext context) : IProcessedArticleRepository
+public sealed class SqlCheckedArticleRepository(CheckerDbContext context) : ICheckedArticleRepository
 {
     public Task<bool> ExistsForScrapedArticleAsync(long scrapedArticleId, CancellationToken cancellationToken = default)
     {
-        return context.ProcessedArticles.AnyAsync(
+        return context.CheckedArticles.AnyAsync(
             article => article.ScrapedArticleId == scrapedArticleId,
             cancellationToken);
     }
 
-    public async Task AddAsync(ProcessedArticle article, CancellationToken cancellationToken = default)
+    public async Task AddAsync(CheckedArticle article, CancellationToken cancellationToken = default)
     {
-        await context.ProcessedArticles.AddAsync(article, cancellationToken);
+        await context.CheckedArticles.AddAsync(article, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
     }
 }

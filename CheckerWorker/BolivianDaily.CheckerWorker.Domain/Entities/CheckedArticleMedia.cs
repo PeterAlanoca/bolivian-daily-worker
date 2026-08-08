@@ -1,9 +1,9 @@
 namespace BolivianDaily.CheckerWorker.Domain.Entities;
 
-public class ProcessedArticleMedia
+public class CheckedArticleMedia
 {
     public long Id { get; set; }
-    public long ProcessedArticleId { get; set; }
+    public long CheckedArticleId { get; set; }
     public string Url { get; set; } = string.Empty;
     public string Type { get; set; } = "image/jpeg";
     public string? Description { get; set; }

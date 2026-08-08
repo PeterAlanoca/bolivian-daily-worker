@@ -5,5 +5,5 @@ namespace BolivianDaily.CheckerWorker.Application.Interfaces;
 
 public interface IArticleChecker
 {
-    Task<ProcessedArticle> CheckAsync(ArticleScrapedEvent message, CancellationToken cancellationToken = default);
+    Task<CheckedArticle> CheckAsync(ArticleScrapedEvent message, CancellationToken cancellationToken = default);
 }

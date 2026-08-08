@@ -7,9 +7,9 @@ namespace BolivianDaily.CheckerWorker.Infrastructure.Mappers;
 
 public static class OpenRouterMapper
 {
-    public static ProcessedArticle ToProcessedArticle(this ArticleValidationResponse articleValidationResponse, ArticleScrapedEvent articleScrapedEvent)
+    public static CheckedArticle ToCheckedArticle(this ArticleValidationResponse articleValidationResponse, ArticleScrapedEvent articleScrapedEvent)
     {
-        return new ProcessedArticle
+        return new CheckedArticle
         {
             ScrapedArticleId = articleScrapedEvent.ArticleId,
             SourceId = articleScrapedEvent.SourceId,
@@ -44,9 +44,9 @@ public static class OpenRouterMapper
         };
     }
 
-    public static ProcessedArticle ToProcessedArticle(this ArticleScrapedEvent articleScrapedEvent, string warning)
+    public static CheckedArticle ToCheckedArticle(this ArticleScrapedEvent articleScrapedEvent, string warning)
     {
-        return new ProcessedArticle
+        return new CheckedArticle
         {
             ScrapedArticleId = articleScrapedEvent.ArticleId,
             SourceId = articleScrapedEvent.SourceId,
@@ -82,9 +82,9 @@ public static class OpenRouterMapper
         );
     }
 
-    private static ProcessedArticleMedia MapMedia(ArticleMediaMessage articleMediaMessage)
+    private static CheckedArticleMedia MapMedia(ArticleMediaMessage articleMediaMessage)
     {
-        return new ProcessedArticleMedia
+        return new CheckedArticleMedia
         {
             Url = articleMediaMessage.Url,
             Type = articleMediaMessage.Type,

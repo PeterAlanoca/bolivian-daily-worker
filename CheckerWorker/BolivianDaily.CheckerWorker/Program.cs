@@ -7,7 +7,7 @@ builder.Services
     .AddCheckerApplication()
     .AddCheckerInfrastructure(builder.Configuration);
 
-builder.Services.AddHostedService<CheckerWorker>();
+builder.Services.AddHostedService<CheckerConsumer>();
 
 var host = builder.Build();
 host.Run();

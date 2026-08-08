@@ -7,7 +7,7 @@ builder.Services
     .AddSyncApplication()
     .AddSyncInfrastructure(builder.Configuration);
 
-builder.Services.AddHostedService<Worker>();
+builder.Services.AddHostedService<SyncConsumer>();
 
 var host = builder.Build();
 host.Run();

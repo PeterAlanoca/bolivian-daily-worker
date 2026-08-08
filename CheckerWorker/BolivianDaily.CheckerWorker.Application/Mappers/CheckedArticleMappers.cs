@@ -3,13 +3,13 @@ using BolivianDaily.Shared.Messaging;
 
 namespace BolivianDaily.CheckerWorker.Application.Mappers;
 
-public static class ProcessedArticleMappers
+public static class CheckedArticleMappers
 {
-    public static ArticleProcessedEvent AsScrapedEvent(this ProcessedArticle article)
+    public static ArticleCheckedEvent ToCheckedEvent(this CheckedArticle article)
     {
-        return new ArticleProcessedEvent(
+        return new ArticleCheckedEvent(
             ScrapedArticleId: article.ScrapedArticleId,
-            ProcessedArticleId: article.Id,
+            CheckedArticleId: article.Id,
             CategoryId: article.CategoryId,
             SourceId: article.SourceId,
             SourceName: article.SourceName,
@@ -30,6 +30,6 @@ public static class ProcessedArticleMappers
                 media.Type,
                 media.Description,
                 media.Path))],
-            ProcessedAt: article.ProcessedAt);
+            CheckedAt: article.CheckedAt);
     }
 }
