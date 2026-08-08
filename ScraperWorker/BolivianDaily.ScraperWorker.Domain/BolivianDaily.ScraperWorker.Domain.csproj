@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\Shared\BolivianDaily.Shared\BolivianDaily.Shared.csproj" />
+  </ItemGroup>
+
 </Project>

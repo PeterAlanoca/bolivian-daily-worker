@@ -1,6 +1,8 @@
 using BolivianDaily.ScraperWorker.Application.DependencyInjection;
 using BolivianDaily.ScraperWorker.Infrastructure.DependencyInjection;
+using BolivianDaily.ScraperWorker.Infrastructure.Persistence;
 using BolivianDaily.ScraperWorker.Workers;
+using Microsoft.EntityFrameworkCore;
 
 var builder = Host.CreateApplicationBuilder(args);
 
@@ -11,4 +13,11 @@ builder.Services
 builder.Services.AddHostedService<JornadaScrapingWorker>();
 
 var host = builder.Build();
+
+using (var scope = host.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<ScraperDbContext>();
+    db.Database.Migrate();
+}
+
 host.Run();

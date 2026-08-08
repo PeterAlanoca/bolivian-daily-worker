@@ -15,7 +15,6 @@ public class ScraperDbContext(DbContextOptions<ScraperDbContext> options) : DbCo
     {
         base.OnModelCreating(modelBuilder);
 
-        // Mapeo de Category
         modelBuilder.Entity<Category>(entity =>
         {
             entity.ToTable("categories");
@@ -24,10 +23,11 @@ public class ScraperDbContext(DbContextOptions<ScraperDbContext> options) : DbCo
             entity.Property(e => e.Name).HasColumnName("name").HasMaxLength(100).IsRequired();
             entity.Property(e => e.Slug).HasColumnName("slug").HasMaxLength(100).IsRequired();
             entity.Property(e => e.State).HasColumnName("state").HasMaxLength(1).HasDefaultValue("A");
+            entity.Property(e => e.CreatedAt).HasColumnName("created_at").HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.Property(e => e.UpdatedAt).HasColumnName("updated_at").HasDefaultValueSql("CURRENT_TIMESTAMP");
             entity.HasIndex(e => e.Slug).IsUnique();
         });
 
-        // Mapeo de NewsSource
         modelBuilder.Entity<NewsSource>(entity =>
         {
             entity.ToTable("news_sources");
@@ -37,10 +37,11 @@ public class ScraperDbContext(DbContextOptions<ScraperDbContext> options) : DbCo
             entity.Property(e => e.Alias).HasColumnName("alias").HasMaxLength(100).IsRequired();
             entity.Property(e => e.BaseUrl).HasColumnName("base_url").HasMaxLength(255).IsRequired();
             entity.Property(e => e.State).HasColumnName("state").HasMaxLength(1).HasDefaultValue("A");
+            entity.Property(e => e.CreatedAt).HasColumnName("created_at").HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.Property(e => e.UpdatedAt).HasColumnName("updated_at").HasDefaultValueSql("CURRENT_TIMESTAMP");
             entity.HasIndex(e => e.Alias).IsUnique();
         });
 
-        // Mapeo de SourceCategory
         modelBuilder.Entity<SourceCategory>(entity =>
         {
             entity.ToTable("source_categories");
@@ -51,6 +52,8 @@ public class ScraperDbContext(DbContextOptions<ScraperDbContext> options) : DbCo
             entity.Property(e => e.Name).HasColumnName("name").HasMaxLength(100).IsRequired();
             entity.Property(e => e.Url).HasColumnName("url").HasMaxLength(255).IsRequired();
             entity.Property(e => e.State).HasColumnName("state").HasMaxLength(1).HasDefaultValue("A");
+            entity.Property(e => e.CreatedAt).HasColumnName("created_at").HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.Property(e => e.UpdatedAt).HasColumnName("updated_at").HasDefaultValueSql("CURRENT_TIMESTAMP");
 
             entity.HasOne(e => e.NewsSource)
                   .WithMany(s => s.Categories)
@@ -63,7 +66,6 @@ public class ScraperDbContext(DbContextOptions<ScraperDbContext> options) : DbCo
                   .OnDelete(DeleteBehavior.Cascade);
         });
 
-        // Mapeo de Article
         modelBuilder.Entity<Article>(entity =>
         {
             entity.ToTable("articles");
@@ -80,10 +82,27 @@ public class ScraperDbContext(DbContextOptions<ScraperDbContext> options) : DbCo
             entity.Property(e => e.Body).HasColumnName("body");
             entity.Property(e => e.Author).HasColumnName("author").HasMaxLength(190);
             entity.Property(e => e.PublishedAt).HasColumnName("published_at");
-            entity.Property(e => e.ScrapedAt).HasColumnName("created_at").HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.Property(e => e.ScrapedAt).HasColumnName("scraped_at").HasDefaultValueSql("CURRENT_TIMESTAMP");
             entity.Property(e => e.State).HasColumnName("state").HasMaxLength(1).HasDefaultValue("A");
-            
+            entity.Property(e => e.CreatedAt).HasColumnName("created_at").HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.Property(e => e.UpdatedAt).HasColumnName("updated_at").HasDefaultValueSql("CURRENT_TIMESTAMP");
+
             entity.HasIndex(e => e.Url).IsUnique();
+
+            entity.HasOne(e => e.NewsSource)
+                  .WithMany()
+                  .HasForeignKey(e => e.NewsSourceId)
+                  .OnDelete(DeleteBehavior.SetNull);
+
+            entity.HasOne(e => e.Category)
+                  .WithMany()
+                  .HasForeignKey(e => e.CategoryId)
+                  .OnDelete(DeleteBehavior.SetNull);
+
+            entity.HasOne(e => e.SourceCategory)
+                  .WithMany()
+                  .HasForeignKey(e => e.SourceCategoryId)
+                  .OnDelete(DeleteBehavior.SetNull);
 
             entity.HasMany(e => e.Media)
                   .WithOne()
@@ -91,7 +110,6 @@ public class ScraperDbContext(DbContextOptions<ScraperDbContext> options) : DbCo
                   .OnDelete(DeleteBehavior.Cascade);
         });
 
-        // Mapeo de ArticleMedia
         modelBuilder.Entity<ArticleMedia>(entity =>
         {
             entity.ToTable("article_media");
@@ -103,6 +121,8 @@ public class ScraperDbContext(DbContextOptions<ScraperDbContext> options) : DbCo
             entity.Property(e => e.Path).HasColumnName("path").HasMaxLength(255);
             entity.Property(e => e.Type).HasColumnName("type").HasMaxLength(50).IsRequired();
             entity.Property(e => e.State).HasColumnName("state").HasMaxLength(1).HasDefaultValue("A");
+            entity.Property(e => e.CreatedAt).HasColumnName("created_at").HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.Property(e => e.UpdatedAt).HasColumnName("updated_at").HasDefaultValueSql("CURRENT_TIMESTAMP");
         });
     }
 }

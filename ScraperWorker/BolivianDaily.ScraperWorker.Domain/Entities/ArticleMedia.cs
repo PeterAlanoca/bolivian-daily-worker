@@ -1,6 +1,8 @@
+using BolivianDaily.Shared.Entities;
+
 namespace BolivianDaily.ScraperWorker.Domain.Entities;
 
-public class ArticleMedia
+public class ArticleMedia : IHasTimestamps
 {
     public long Id { get; set; }
     public long? ArticleId { get; set; }
@@ -9,4 +11,6 @@ public class ArticleMedia
     public string? Path { get; set; }
     public string Type { get; set; } = "image/jpeg";
     public string State { get; set; } = "A";
+    public DateTime CreatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; }
 }

@@ -19,7 +19,8 @@ public static class InfrastructureServiceExtensions
     public static IServiceCollection AddScraperInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<ScraperDbContext>(options =>
-            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
+            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"))
+                   .AddInterceptors(new UpdateTimestampInterceptor()));
 
         services.Configure<JornadaOptions>(configuration.GetSection(JornadaOptions.SectionName));
         services.Configure<ElDiarioOptions>(configuration.GetSection(ElDiarioOptions.SectionName));

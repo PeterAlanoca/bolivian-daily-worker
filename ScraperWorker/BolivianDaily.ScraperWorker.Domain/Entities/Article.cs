@@ -1,6 +1,8 @@
+using BolivianDaily.Shared.Entities;
+
 namespace BolivianDaily.ScraperWorker.Domain.Entities;
 
-public class Article
+public class Article : IHasTimestamps
 {
     public long Id { get; set; }
     public long? NewsSourceId { get; set; }
@@ -16,5 +18,10 @@ public class Article
     public DateTime? PublishedAt { get; set; }
     public DateTime ScrapedAt { get; set; } = DateTime.UtcNow;
     public string State { get; set; } = "A";
+    public DateTime CreatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; }
+    public NewsSource? NewsSource { get; set; }
+    public Category? Category { get; set; }
+    public SourceCategory? SourceCategory { get; set; }
     public List<ArticleMedia> Media { get; set; } = new();
 }

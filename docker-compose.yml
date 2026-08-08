@@ -1,5 +1,39 @@
 services:
 
+  scraper-postgres:
+    image: postgres:16
+    container_name: scraper-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: scraper_db
+      POSTGRES_USER: scraper_user
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - scraper-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U scraper_user -d scraper_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  checker-postgres:
+    image: postgres:16
+    container_name: checker-postgres
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: checker_db
+      POSTGRES_USER: checker_user
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - checker-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U checker_user -d checker_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   rabbitmq:
     image: rabbitmq:3-management
     container_name: rabbitmq
@@ -17,41 +51,7 @@ services:
       timeout: 5s
       retries: 5
 
-  postgres-scraper:
-    image: postgres:16
-    container_name: postgres-scraper
-    ports:
-      - "5432:5432"
-    environment:
-      POSTGRES_DB: scraper
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: root
-    volumes:
-      - postgres-scraper-data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d scraper"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  postgres-checker:
-    image: postgres:16
-    container_name: postgres-checker
-    ports:
-      - "5433:5432"
-    environment:
-      POSTGRES_DB: checker
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: root
-    volumes:
-      - postgres-checker-data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d checker"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
 volumes:
+  scraper-postgres-data:
+  checker-postgres-data:
   rabbitmq-data:
-  postgres-scraper-data:
-  postgres-checker-data:
