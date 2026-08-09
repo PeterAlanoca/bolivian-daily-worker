@@ -1,4 +1,5 @@
 using System.Net.Http.Json;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using BolivianDaily.Shared.Messaging;
 using BolivianDaily.SyncWorker.Application.Interfaces;
@@ -9,7 +10,7 @@ namespace BolivianDaily.SyncWorker.Infrastructure.ExternalApi;
 
 public sealed class BolivianDailyApiClient(HttpClient httpClient, IOptions<ExternalApiOptions> options) : IExternalNewsApiClient
 {
-    public async Task<string?> SendAsync(ArticleCheckedEvent message, CancellationToken cancellationToken = default)
+    public async Task<CloudArticleResult> SendAsync(ArticleCheckedEvent message, CancellationToken cancellationToken = default)
     {
         var externalApiOptions = options.Value;
         if (string.IsNullOrWhiteSpace(externalApiOptions.Url))
@@ -30,13 +31,31 @@ public sealed class BolivianDailyApiClient(HttpClient httpClient, IOptions<Exter
             message.Body,
             message.Author,
             message.PublishedAt,
-            message.State,
             message.Media.Select(media => new ExternalArticleMediaRequest(media.Url, media.Type)).ToArray()));
 
         using var response = await httpClient.SendAsync(request, cancellationToken);
         response.EnsureSuccessStatusCode();
 
-        return response.Headers.Location?.ToString();
+        var responseBody = await response.Content.ReadAsStringAsync(cancellationToken);
+        if (!string.IsNullOrWhiteSpace(responseBody))
+        {
+            try
+            {
+                using var document = JsonDocument.Parse(responseBody);
+                var root = document.RootElement;
+                var id = root.TryGetProperty("id", out var idProperty) ? idProperty.ToString() : null;
+                var url = root.TryGetProperty("url", out var urlProperty) ? urlProperty.ToString() : null;
+                if (id is not null || url is not null)
+                {
+                    return new CloudArticleResult(id, url);
+                }
+            }
+            catch (JsonException)
+            {
+            }
+        }
+
+        return new CloudArticleResult(null, response.Headers.Location?.ToString());
     }
 
     private sealed record ExternalArticleRequest(
@@ -50,7 +69,6 @@ public sealed class BolivianDailyApiClient(HttpClient httpClient, IOptions<Exter
         [property: JsonPropertyName("body")] string Body,
         [property: JsonPropertyName("author")] string? Author,
         [property: JsonPropertyName("publication_date")] DateTime? PublicationDate,
-        [property: JsonPropertyName("state")] string State,
         [property: JsonPropertyName("multimedia")] IReadOnlyCollection<ExternalArticleMediaRequest> Multimedia);
 
     private sealed record ExternalArticleMediaRequest(

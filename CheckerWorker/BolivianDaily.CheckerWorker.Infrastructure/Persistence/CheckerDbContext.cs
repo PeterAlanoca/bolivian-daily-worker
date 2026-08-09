@@ -31,7 +31,6 @@ public sealed class CheckerDbContext(DbContextOptions<CheckerDbContext> options)
             entity.Property(article => article.Body).HasColumnName("body").IsRequired();
             entity.Property(article => article.Author).HasColumnName("author").HasMaxLength(250);
             entity.Property(article => article.PublishedAt).HasColumnName("published_at");
-            entity.Property(article => article.State).HasColumnName("state").HasMaxLength(1).HasDefaultValue("A");
             entity.Property(article => article.CheckedAt).HasColumnName("checked_at");
             entity.Property(article => article.Warnings).HasColumnName("warnings");
             entity.Property(article => article.IsValid).HasColumnName("is_valid");

@@ -3,6 +3,7 @@ using System;
 using BolivianDaily.ScraperWorker.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BolivianDaily.ScraperWorker.Infrastructure.Migrations
 {
     [DbContext(typeof(ScraperDbContext))]
-    partial class ScraperDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260809220134_DropArticleState")]
+    partial class DropArticleState
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

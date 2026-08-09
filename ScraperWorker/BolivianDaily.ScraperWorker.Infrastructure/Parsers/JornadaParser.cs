@@ -86,8 +86,7 @@ public class JornadaParser(HtmlDocumentFetcher fetcher, ILogger<JornadaParser> l
                 Subtitle = CleanText(subtitleNode?.InnerText),
                 Author = CleanText(authorNode?.InnerText) ?? CleanText(authorNode?.GetAttributeValue("content", string.Empty)),
                 PublishedAt = ExtractPublicationDate(document),
-                ScrapedAt = DateTime.UtcNow,
-                State = "A"
+                ScrapedAt = DateTime.UtcNow
             };
 
             if (bodyNode is not null)

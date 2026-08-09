@@ -17,6 +17,5 @@ public sealed record ArticleCheckedEvent(
     string? Author,
     DateTime? PublishedAt,
     DateTime ScrapedAt,
-    string State,
     IReadOnlyCollection<ArticleMediaMessage> Media,
     DateTime CheckedAt);

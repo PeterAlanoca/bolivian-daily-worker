@@ -20,9 +20,10 @@ public static class InfrastructureServiceExtensions
         services.Configure<ExternalApiOptions>(configuration.GetSection(ExternalApiOptions.SectionName));
 
         services.AddDbContext<SyncDbContext>(options =>
-            options.UseNpgsql(configuration.GetConnectionString("SyncDb")));
+            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"))
+                .AddInterceptors(new UpdateTimestampInterceptor()));
 
-        services.AddScoped<IArticleSyncLogRepository, ArticleSyncLogRepository>();
+        services.AddScoped<ISyncedArticleRepository, SyncedArticleRepository>();
         services.AddHttpClient<IExternalNewsApiClient, BolivianDailyApiClient>();
 
         services.AddSingleton<ConnectionFactory>(sp =>

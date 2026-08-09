@@ -24,7 +24,6 @@ public static class CheckedArticleMappers
             Author: article.Author,
             PublishedAt: article.PublishedAt,
             ScrapedAt: article.ScrapedAt,
-            State: article.State,
             Media: [.. article.Media.Select(media => new ArticleMediaMessage(
                 media.Url,
                 media.Type,

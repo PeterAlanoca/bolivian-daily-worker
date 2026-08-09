@@ -83,7 +83,6 @@ public class ScraperDbContext(DbContextOptions<ScraperDbContext> options) : DbCo
             entity.Property(e => e.Author).HasColumnName("author").HasMaxLength(190);
             entity.Property(e => e.PublishedAt).HasColumnName("published_at");
             entity.Property(e => e.ScrapedAt).HasColumnName("scraped_at").HasDefaultValueSql("CURRENT_TIMESTAMP");
-            entity.Property(e => e.State).HasColumnName("state").HasMaxLength(1).HasDefaultValue("A");
             entity.Property(e => e.CreatedAt).HasColumnName("created_at").HasDefaultValueSql("CURRENT_TIMESTAMP");
             entity.Property(e => e.UpdatedAt).HasColumnName("updated_at").HasDefaultValueSql("CURRENT_TIMESTAMP");
 

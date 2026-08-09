@@ -1,10 +1,11 @@
 using BolivianDaily.Shared.Entities;
 
-namespace BolivianDaily.CheckerWorker.Domain.Entities;
+namespace BolivianDaily.SyncWorker.Domain.Entities;
 
-public class CheckedArticle : IHasTimestamps
+public class SyncedArticle : IHasTimestamps
 {
     public long Id { get; set; }
+    public long CheckedArticleId { get; set; }
     public long ScrapedArticleId { get; set; }
     public long? SourceId { get; set; }
     public string SourceName { get; set; } = string.Empty;
@@ -20,22 +21,14 @@ public class CheckedArticle : IHasTimestamps
     public string? Author { get; set; }
     public DateTime? PublishedAt { get; set; }
     public DateTime ScrapedAt { get; set; }
-    public DateTime CheckedAt { get; set; } = DateTime.UtcNow;
-    public string? Warnings { get; set; }
+    public DateTime CheckedAt { get; set; }
+    public string Status { get; set; } = string.Empty;
+    public int Attempts { get; set; }
+    public string? CloudId { get; set; }
+    public string? CloudUrl { get; set; }
+    public string? Details { get; set; }
+    public DateTime? SyncedAt { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
-
-    public bool IsValid { get; set; }
-    public bool HtmlFormatPassed { get; set; }
-    public string? HtmlFormatReason { get; set; }
-    public bool CategoryAccuracyPassed { get; set; }
-    public string? CategoryAccuracyReason { get; set; }
-    public string? SuggestedCategory { get; set; }
-    public bool NoAdvertisingPassed { get; set; }
-    public string? NoAdvertisingReason { get; set; }
-    public string? DetectedNetworks { get; set; }
-    public bool ReadyToPublishPassed { get; set; }
-    public string? ReadyToPublishReason { get; set; }
-
-    public List<CheckedArticleMedia> Media { get; set; } = new();
+    public List<SyncedArticleMedia> Media { get; set; } = new();
 }

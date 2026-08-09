@@ -34,6 +34,23 @@ services:
       timeout: 5s
       retries: 5
 
+  sync-postgres:
+    image: postgres:16
+    container_name: sync-postgres
+    ports:
+      - "5434:5432"
+    environment:
+      POSTGRES_DB: sync_db
+      POSTGRES_USER: sync_user
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - sync-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sync_user -d sync_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   rabbitmq:
     image: rabbitmq:3-management
     container_name: rabbitmq
@@ -54,4 +71,5 @@ services:
 volumes:
   scraper-postgres-data:
   checker-postgres-data:
+  sync-postgres-data:
   rabbitmq-data:

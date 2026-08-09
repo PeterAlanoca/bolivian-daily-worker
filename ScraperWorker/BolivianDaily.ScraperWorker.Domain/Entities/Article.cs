@@ -17,7 +17,6 @@ public class Article : IHasTimestamps
     public string? Author { get; set; }
     public DateTime? PublishedAt { get; set; }
     public DateTime ScrapedAt { get; set; } = DateTime.UtcNow;
-    public string State { get; set; } = "A";
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
     public NewsSource? NewsSource { get; set; }

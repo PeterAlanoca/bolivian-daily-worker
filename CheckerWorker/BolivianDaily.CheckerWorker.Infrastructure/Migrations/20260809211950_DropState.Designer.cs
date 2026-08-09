@@ -3,6 +3,7 @@ using System;
 using BolivianDaily.CheckerWorker.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BolivianDaily.CheckerWorker.Infrastructure.Migrations
 {
     [DbContext(typeof(CheckerDbContext))]
-    partial class CheckerDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260809211950_DropState")]
+    partial class DropState
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
