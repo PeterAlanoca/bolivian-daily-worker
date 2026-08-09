@@ -10,7 +10,6 @@ public class ArticleMedia : IHasTimestamps
     public string Url { get; set; } = string.Empty;
     public string? Path { get; set; }
     public string Type { get; set; } = "image/jpeg";
-    public string State { get; set; } = "A";
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 }

@@ -12,7 +12,7 @@ public static class ArticleMappers
             SourceId: source.Id,
             SourceName: source.Name,
             SourceUrl: source.BaseUrl,
-            ArticleUrl: article.Url,
+            Url: article.Url,
             CategoryId: category.Id,
             CategoryName: category.Name,
             Pretitle: article.Pretitle,
@@ -21,7 +21,7 @@ public static class ArticleMappers
             Lead: article.Lead,
             RawBody: article.Body,
             Author: article.Author,
-            PublicationDate: article.PublishedAt,
+            PublishedAt: article.PublishedAt,
             Media: [.. article.Media.Select(m => new ArticleMediaMessage(m.Url, m.Type, m.Description, m.Path))],
             ScrapedAt: article.ScrapedAt);
     }

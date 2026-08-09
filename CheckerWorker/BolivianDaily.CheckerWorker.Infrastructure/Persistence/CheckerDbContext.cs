@@ -21,16 +21,16 @@ public sealed class CheckerDbContext(DbContextOptions<CheckerDbContext> options)
             entity.Property(article => article.SourceId).HasColumnName("source_id");
             entity.Property(article => article.SourceName).HasColumnName("source_name").HasMaxLength(100).IsRequired();
             entity.Property(article => article.SourceUrl).HasColumnName("source_url").HasMaxLength(255).IsRequired();
-            entity.Property(article => article.ArticleUrl).HasColumnName("article_url").IsRequired();
+            entity.Property(article => article.Url).HasColumnName("url").IsRequired();
             entity.Property(article => article.CategoryName).HasColumnName("category_name").HasMaxLength(100);
             entity.Property(article => article.ScrapedAt).HasColumnName("scraped_at");
             entity.Property(article => article.Title).HasColumnName("title").IsRequired();
             entity.Property(article => article.Pretitle).HasColumnName("pretitle");
             entity.Property(article => article.Subtitle).HasColumnName("subtitle");
-            entity.Property(article => article.Enter).HasColumnName("enter");
+            entity.Property(article => article.Lead).HasColumnName("lead");
             entity.Property(article => article.Body).HasColumnName("body").IsRequired();
             entity.Property(article => article.Author).HasColumnName("author").HasMaxLength(250);
-            entity.Property(article => article.PublicationDate).HasColumnName("publication_date");
+            entity.Property(article => article.PublishedAt).HasColumnName("published_at");
             entity.Property(article => article.State).HasColumnName("state").HasMaxLength(1).HasDefaultValue("A");
             entity.Property(article => article.CheckedAt).HasColumnName("checked_at");
             entity.Property(article => article.Warnings).HasColumnName("warnings");
@@ -45,6 +45,9 @@ public sealed class CheckerDbContext(DbContextOptions<CheckerDbContext> options)
             entity.Property(article => article.DetectedNetworks).HasColumnName("detected_networks");
             entity.Property(article => article.ReadyToPublishPassed).HasColumnName("ready_to_publish_passed");
             entity.Property(article => article.ReadyToPublishReason).HasColumnName("ready_to_publish_reason");
+            entity.Property(article => article.CreatedAt).HasColumnName("created_at").HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.Property(article => article.UpdatedAt).HasColumnName("updated_at").HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.HasIndex(article => article.Url).IsUnique();
             entity.HasMany(article => article.Media)
                 .WithOne()
                 .HasForeignKey(media => media.CheckedArticleId)
@@ -61,6 +64,8 @@ public sealed class CheckerDbContext(DbContextOptions<CheckerDbContext> options)
             entity.Property(media => media.Type).HasColumnName("type").HasMaxLength(50).IsRequired();
             entity.Property(media => media.Description).HasColumnName("description");
             entity.Property(media => media.Path).HasColumnName("path").HasMaxLength(255);
+            entity.Property(media => media.CreatedAt).HasColumnName("created_at").HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.Property(media => media.UpdatedAt).HasColumnName("updated_at").HasDefaultValueSql("CURRENT_TIMESTAMP");
         });
     }
 }

@@ -23,9 +23,9 @@ Each worker has 4 projects: `BolivianDaily.<X>Worker` (host), `.Application`, `.
 ## Database
 
 - DBs: `scraper_db` (user `scraper_user`), `checker_db` (user `checker_user`). `sync_db` pending.
-- **Only ScraperWorker runs `Database.Migrate()` in its `Program.cs`** — its DB creates/migrates/seeds itself on startup. Checker/Sync have no migrations yet (their Program.cs does not call Migrate).
+- **ScraperWorker and CheckerWorker run `Database.Migrate()` in their `Program.cs`** — each DB creates/migrates/seeds itself on startup. Sync has no migrations yet.
 - Migrations ARE versioned (`Migrations/` folder in each Infrastructure, tracked in git).
-- Post-migration check: `docker exec scraper-postgres psql -U scraper_user -d scraper_db -c "\dt"`.
+- Post-migration check: `docker exec scraper-postgres psql -U scraper_user -d scraper_db -c "\dt"` and `docker exec checker-postgres psql -U checker_user -d checker_db -c "\dt"`.
 
 ### Migration conventions (mandatory — see skill `.opencode/skills/ef-migrations/SKILL.md`)
 

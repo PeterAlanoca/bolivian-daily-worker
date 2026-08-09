@@ -183,8 +183,7 @@ public class JornadaParser(HtmlDocumentFetcher fetcher, ILogger<JornadaParser> l
         {
             Url = src,
             Description = caption,
-            Type = GetMimeType(src),
-            State = "A"
+            Type = GetMimeType(src)
         });
 
         return media;

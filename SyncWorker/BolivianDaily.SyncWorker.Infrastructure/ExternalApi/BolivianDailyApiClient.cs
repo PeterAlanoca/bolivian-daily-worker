@@ -26,10 +26,10 @@ public sealed class BolivianDailyApiClient(HttpClient httpClient, IOptions<Exter
             message.Title,
             message.Pretitle,
             message.Subtitle,
-            message.Enter,
+            message.Lead,
             message.Body,
             message.Author,
-            message.PublicationDate,
+            message.PublishedAt,
             message.State,
             message.Media.Select(media => new ExternalArticleMediaRequest(media.Url, media.Type)).ToArray()));
 

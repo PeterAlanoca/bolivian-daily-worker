@@ -5,7 +5,7 @@ public sealed record ArticleScrapedEvent(
     long? SourceId,
     string SourceName,
     string SourceUrl,
-    string? ArticleUrl,
+    string? Url,
     long? CategoryId,
     string? CategoryName,
     string? Pretitle,
@@ -14,6 +14,6 @@ public sealed record ArticleScrapedEvent(
     string? Lead,
     string? RawBody,
     string? Author,
-    DateTime? PublicationDate,
+    DateTime? PublishedAt,
     IReadOnlyCollection<ArticleMediaMessage> Media,
     DateTime ScrapedAt);

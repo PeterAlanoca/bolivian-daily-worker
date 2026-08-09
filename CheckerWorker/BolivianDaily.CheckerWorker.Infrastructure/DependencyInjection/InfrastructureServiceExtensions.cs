@@ -22,7 +22,9 @@ public static class InfrastructureServiceExtensions
         services.Configure<OpenRouterOptions>(configuration.GetSection(OpenRouterOptions.SectionName));
 
         services.AddDbContext<CheckerDbContext>(options =>
-            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
+            options
+                .UseNpgsql(configuration.GetConnectionString("DefaultConnection"))
+                .AddInterceptors(new UpdateTimestampInterceptor()));
 
         services.AddScoped<ICheckedArticleRepository, SqlCheckedArticleRepository>();
         services.AddScoped<IArticleCheckedEventPublisher, RabbitMqArticleCheckedEventPublisher>();
