@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 namespace BolivianDaily.SyncWorker.Application.UseCases.SyncCheckedArticle;
 
 public sealed class SyncCheckedArticleUseCase(
-    IExternalNewsApiClient apiClient,
+    IArticleSyncer apiClient,
     ISyncedArticleRepository repository,
     ILogger<SyncCheckedArticleUseCase> logger)
 {
@@ -23,10 +23,11 @@ public sealed class SyncCheckedArticleUseCase(
 
         try
         {
-            var result = await apiClient.SendAsync(message, cancellationToken);
-            syncedArticle.CloudId = result.Id;
-            syncedArticle.CloudUrl = result.Url;
-            syncedArticle.Status = "SYNCED";
+            var result = await apiClient.SyncAsync(message, cancellationToken);
+            syncedArticle.ExtranetId = result.Id;
+            syncedArticle.ExtranetUrl = result.Url;
+            syncedArticle.Status = result.Status ?? "SYNCED";
+            syncedArticle.Details = result.Message;
             syncedArticle.SyncedAt = DateTime.UtcNow;
         }
         catch (Exception ex)

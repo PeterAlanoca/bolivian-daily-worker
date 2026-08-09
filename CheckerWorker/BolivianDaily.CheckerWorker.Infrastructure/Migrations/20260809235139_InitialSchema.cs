@@ -33,7 +33,6 @@ namespace BolivianDaily.CheckerWorker.Infrastructure.Migrations
                     author = table.Column<string>(type: "character varying(250)", maxLength: 250, nullable: true),
                     published_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     scraped_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    state = table.Column<string>(type: "character varying(1)", maxLength: 1, nullable: false, defaultValue: "A"),
                     checked_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     warnings = table.Column<string>(type: "text", nullable: true),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),

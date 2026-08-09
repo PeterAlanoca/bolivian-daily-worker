@@ -11,8 +11,8 @@ flowchart TD
         SW -->|Publishes raw data| RMQ[(RabbitMQ)]
         RMQ -->|Consumes raw data| IA[IA Worker Host]
         IA -->|Processes & sends to| API_IA[API IA / Ingesta]
-        API_IA -->|Uploads via Loader| CL[Cloud Loader / Extranet Worker]
-        CL -->|Publishes to| API_CLOUD[API Cloud / Extranet]
+        API_IA -->|Uploads via Loader| CL[Extranet Worker]
+        CL -->|Publishes to| API_EXTRANET[API Extranet]
     end
 ```
 

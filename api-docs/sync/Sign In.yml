@@ -1,11 +1,11 @@
 info:
-  name: Login
+  name: Sign In
   type: http
   seq: 1
 
 http:
   method: POST
-  url: '{{apiBaseUrl}}/api/auth/login'
+  url: "{{apiBaseUrl}}/api/auth/sign-in"
   headers:
     - name: Content-Type
       value: application/json
@@ -25,6 +25,12 @@ runtime:
           bru.setVar("accessToken", res.body.access_token);
           bru.setVar("refreshToken", res.body.refresh_token);
         }
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
 
 docs: |-
   POST `{{apiBaseUrl}}/api/auth/login`

@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BolivianDaily.SyncWorker.Infrastructure.Migrations
 {
     [DbContext(typeof(SyncDbContext))]
-    [Migration("20260809213706_InitialSchema")]
+    [Migration("20260809235139_InitialSchema")]
     partial class InitialSchema
     {
         /// <inheritdoc />
@@ -65,16 +65,6 @@ namespace BolivianDaily.SyncWorker.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("checked_at");
 
-                    b.Property<string>("CloudId")
-                        .HasMaxLength(250)
-                        .HasColumnType("character varying(250)")
-                        .HasColumnName("cloud_id");
-
-                    b.Property<string>("CloudUrl")
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)")
-                        .HasColumnName("cloud_url");
-
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
@@ -84,6 +74,16 @@ namespace BolivianDaily.SyncWorker.Infrastructure.Migrations
                     b.Property<string>("Details")
                         .HasColumnType("text")
                         .HasColumnName("details");
+
+                    b.Property<string>("ExtranetId")
+                        .HasMaxLength(250)
+                        .HasColumnType("character varying(250)")
+                        .HasColumnName("extranet_id");
+
+                    b.Property<string>("ExtranetUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("extranet_url");
 
                     b.Property<string>("Lead")
                         .HasColumnType("text")

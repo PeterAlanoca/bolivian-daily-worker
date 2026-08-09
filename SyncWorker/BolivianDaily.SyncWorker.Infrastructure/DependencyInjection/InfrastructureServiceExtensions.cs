@@ -2,7 +2,7 @@ using BolivianDaily.Shared.Messaging;
 using BolivianDaily.SyncWorker.Application.Interfaces;
 using BolivianDaily.SyncWorker.Domain.Repositories;
 using BolivianDaily.SyncWorker.Infrastructure.Configuration;
-using BolivianDaily.SyncWorker.Infrastructure.ExternalApi;
+using BolivianDaily.SyncWorker.Infrastructure.Extranet;
 using BolivianDaily.SyncWorker.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -17,14 +17,27 @@ public static class InfrastructureServiceExtensions
     public static IServiceCollection AddSyncInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         services.Configure<RabbitMqOptions>(configuration.GetSection(RabbitMqOptions.SectionName));
-        services.Configure<ExternalApiOptions>(configuration.GetSection(ExternalApiOptions.SectionName));
+        services.Configure<ExtranetOptions>(configuration.GetSection(ExtranetOptions.SectionName));
 
         services.AddDbContext<SyncDbContext>(options =>
             options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"))
                 .AddInterceptors(new UpdateTimestampInterceptor()));
 
         services.AddScoped<ISyncedArticleRepository, SyncedArticleRepository>();
-        services.AddHttpClient<IExternalNewsApiClient, BolivianDailyApiClient>();
+        services.AddHttpClient("extranet", (sp, client) =>
+        {
+            var opts = sp.GetRequiredService<IOptions<ExtranetOptions>>().Value;
+            client.BaseAddress = new Uri(opts.Url);
+        });
+        services.AddSingleton<ExtranetTokenProvider>(sp =>
+            new ExtranetTokenProvider(
+                sp.GetRequiredService<IHttpClientFactory>().CreateClient("extranet"),
+                sp.GetRequiredService<IOptions<ExtranetOptions>>()));
+        services.AddHttpClient<IArticleSyncer, ExtranetArticleSyncer>((sp, client) =>
+        {
+            var opts = sp.GetRequiredService<IOptions<ExtranetOptions>>().Value;
+            client.BaseAddress = new Uri(opts.Url);
+        });
 
         services.AddSingleton<ConnectionFactory>(sp =>
         {

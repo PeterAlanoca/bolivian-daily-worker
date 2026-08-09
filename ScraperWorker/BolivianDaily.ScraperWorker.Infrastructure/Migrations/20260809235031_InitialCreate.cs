@@ -96,7 +96,6 @@ namespace BolivianDaily.ScraperWorker.Infrastructure.Migrations
                     author = table.Column<string>(type: "character varying(190)", maxLength: 190, nullable: true),
                     published_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     scraped_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
-                    state = table.Column<string>(type: "character varying(1)", maxLength: 1, nullable: false, defaultValue: "A"),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
                     updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP")
                 },
@@ -134,7 +133,6 @@ namespace BolivianDaily.ScraperWorker.Infrastructure.Migrations
                     url = table.Column<string>(type: "text", nullable: false),
                     path = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     type = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    state = table.Column<string>(type: "character varying(1)", maxLength: 1, nullable: false, defaultValue: "A"),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
                     updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP")
                 },

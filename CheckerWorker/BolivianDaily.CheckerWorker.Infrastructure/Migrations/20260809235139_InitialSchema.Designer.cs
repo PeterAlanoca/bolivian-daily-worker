@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BolivianDaily.CheckerWorker.Infrastructure.Migrations
 {
     [DbContext(typeof(CheckerDbContext))]
-    [Migration("20260809211950_DropState")]
-    partial class DropState
+    [Migration("20260809235139_InitialSchema")]
+    partial class InitialSchema
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

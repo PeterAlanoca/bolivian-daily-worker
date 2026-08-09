@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BolivianDaily.ScraperWorker.Infrastructure.Migrations
 {
     [DbContext(typeof(ScraperDbContext))]
-    [Migration("20260809014426_DropArticleMediaState")]
-    partial class DropArticleMediaState
+    [Migration("20260809235031_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -78,14 +78,6 @@ namespace BolivianDaily.ScraperWorker.Infrastructure.Migrations
                     b.Property<long?>("SourceCategoryId")
                         .HasColumnType("bigint")
                         .HasColumnName("source_category_id");
-
-                    b.Property<string>("State")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(1)
-                        .HasColumnType("character varying(1)")
-                        .HasDefaultValue("A")
-                        .HasColumnName("state");
 
                     b.Property<string>("Subtitle")
                         .HasColumnType("text")

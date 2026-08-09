@@ -24,8 +24,8 @@ public class SyncedArticle : IHasTimestamps
     public DateTime CheckedAt { get; set; }
     public string Status { get; set; } = string.Empty;
     public int Attempts { get; set; }
-    public string? CloudId { get; set; }
-    public string? CloudUrl { get; set; }
+    public string? ExtranetId { get; set; }
+    public string? ExtranetUrl { get; set; }
     public string? Details { get; set; }
     public DateTime? SyncedAt { get; set; }
     public DateTime CreatedAt { get; set; }
