@@ -24,7 +24,7 @@ http:
           },
           {
             "role": "user",
-            "content": "{\"articleId\":12345,\"sourceId\":1,\"sourceName\":\"Jornada\",\"sourceUrl\":\"https://jornada.com.bo\",\"articleUrl\":\"https://jornada.com.bo/noticia/estudiantes-feria-ciencia\",\"categoryId\":3,\"categoryName\":\"SOCIEDAD\",\"pretitle\":null,\"title\":\"Estudiantes de La Paz ganan feria de ciencia\",\"subtitle\":\"El evento reunio a mas de 200 proyectos\",\"lead\":\"La feria se realizo en el campo ferial del Bicentenario.\",\"rawBody\":\"<p>La feria de ciencias reunio a estudiantes de toda La Paz.</p><p>El jurado destaco el proyecto de energias renovables.</p>\",\"author\":\"Redaccion\",\"publicationDate\":\"2026-08-05T10:30:00-04:00\",\"media\":[{\"url\":\"https://jornada.com.bo/img/12345.jpg\",\"type\":\"image\",\"description\":\"Estudiantes en la feria\",\"path\":null}],\"scrapedAt\":\"2026-08-05T10:35:00-04:00\"}"
+            "content": "{\"articleId\":12345,\"sourceId\":1,\"sourceName\":\"Jornada\",\"sourceUrl\":\"https://jornada.com.bo\",\"url\":\"https://jornada.com.bo/noticia/estudiantes-feria-ciencia\",\"categoryId\":3,\"categoryName\":\"SOCIEDAD\",\"pretitle\":null,\"title\":\"Estudiantes de La Paz ganan feria de ciencia\",\"subtitle\":\"El evento reunio a mas de 200 proyectos\",\"lead\":\"La feria se realizo en el campo ferial del Bicentenario.\",\"rawBody\":\"<p>La feria de ciencias reunio a estudiantes de toda La Paz.</p><p>El jurado destaco el proyecto de energias renovables.</p>\",\"author\":\"Redaccion\",\"publishedAt\":\"2026-08-05T10:30:00-04:00\",\"media\":[{\"url\":\"https://jornada.com.bo/img/12345.jpg\",\"type\":\"image\",\"description\":\"Estudiantes en la feria\",\"path\":null}],\"scrapedAt\":\"2026-08-05T10:35:00-04:00\"}"
           }
         ]
       }
@@ -74,4 +74,4 @@ docs: |-
 
   Nota: `choices[0].message.content` es un JSON deserializable a `ArticleValidationResponse`:
   `{ articleId, isValid, validations: { htmlFormat, categoryAccuracy, noAdvertising, readyToPublish } }`.
-  Si content es vacio/invalido o `isValid = false`, el CheckerWorker marca `ProcessedArticle` con warning.
+  Si content es vacio/invalido o `isValid = false`, el CheckerWorker marca `CheckedArticle` con warning.
