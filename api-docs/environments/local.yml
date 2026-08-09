@@ -60,6 +60,11 @@ variables:
     enabled: true
     secret: false
     description: DeepSeek API key (resolved from .env, gitignored)
+  - name: rabbitmqBaseUrl
+    value: 'http://localhost:15672'
+    enabled: true
+    secret: false
+    description: 'RabbitMQ Management API base URL (local: localhost:15672)'
   - name: apiBaseUrl
     value: https://0240-2800-320-c952-1400-25e2-358a-c9f1-a370.ngrok-free.app
     enabled: true
