@@ -78,6 +78,7 @@ See skill `.opencode/skills/rabbitmq-messaging/SKILL.md` for the full workflow (
 - Names in English; tables and columns `snake_case`, entities plural.
 - **Variables = camelCase del tipo declarado** (parámetros de ctor/método/extension, fields, `var` locals, colecciones) para tipos del proyecto: `IArticleSyncer` → `articleSyncer`, `SyncDbContext` → `syncDbContext`, `ArticleCheckedEvent` → `articleCheckedEvent`, `IEnumerable<INewsSourceParser>` → `newsSourceParsers`. Tipos de framework conservan su idioma natural: `httpClient`, `logger`, `options` (`IOptions<T>`), `connection`, `channel`, `serviceProvider`, `scope`, `ct`/`stoppingToken`.
 - Repositories: `Sql*Repository` in Infrastructure; one `DbContext` per worker; snake_case mapping in `OnModelCreating`.
+- **Type suffixes** (Repository/Syncer/Checker/Parser/Provider/Publisher/Consumer/Worker/UseCase/Options/Mappers/DTOs) follow the taxonomy in skill `.opencode/skills/naming-conventions/SKILL.md` — forbidden: `*ApiClient`, generic `*Service`/`*Manager`/`*Helper`. `*Provider` only for concrete suppliers (options, token), never for whole API integrations (use `*Syncer`/`*Checker`).
 - **Mappers**: static extension classes in `Application/Mappers/` (`ArticleMappers`, `CheckedArticleMappers`, `SyncedArticleMappers`) — use cases never build entities inline; they call the mapper.
 - Host projects reference `Microsoft.EntityFrameworkCore.Design` (needed by `dotnet ef`).
 - Connection string key is `DefaultConnection` in all 3 workers' `appsettings.json`.
