@@ -75,9 +75,8 @@ namespace BolivianDaily.SyncWorker.Infrastructure.Migrations
                         .HasColumnType("text")
                         .HasColumnName("details");
 
-                    b.Property<string>("ExtranetId")
-                        .HasMaxLength(250)
-                        .HasColumnType("character varying(250)")
+                    b.Property<long?>("ExtranetId")
+                        .HasColumnType("bigint")
                         .HasColumnName("extranet_id");
 
                     b.Property<string>("ExtranetUrl")
