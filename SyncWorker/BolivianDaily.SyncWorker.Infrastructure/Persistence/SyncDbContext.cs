@@ -35,7 +35,7 @@ public sealed class SyncDbContext(DbContextOptions<SyncDbContext> options) : DbC
             entity.Property(article => article.CheckedAt).HasColumnName("checked_at");
             entity.Property(article => article.Status).HasColumnName("status").HasMaxLength(50).IsRequired();
             entity.Property(article => article.Attempts).HasColumnName("attempts");
-            entity.Property(article => article.ExtranetId).HasColumnName("extranet_id").HasMaxLength(250);
+            entity.Property(article => article.ExtranetId).HasColumnName("extranet_id");
             entity.Property(article => article.ExtranetUrl).HasColumnName("extranet_url").HasMaxLength(500);
             entity.Property(article => article.Details).HasColumnName("details");
             entity.Property(article => article.SyncedAt).HasColumnName("synced_at");

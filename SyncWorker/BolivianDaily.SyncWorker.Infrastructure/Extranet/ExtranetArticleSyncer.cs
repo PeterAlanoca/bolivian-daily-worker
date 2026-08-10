@@ -47,7 +47,7 @@ public sealed class ExtranetArticleSyncer(HttpClient httpClient, ExtranetTokenPr
         var wrapper = await response.Content.ReadFromJsonAsync<ExtranetApiResponse<ExtranetArticleData>>(cancellationToken);
         var data = wrapper?.Data;
 
-        return new ArticleSyncResult(data?.Id, null, data?.Status, wrapper?.Message);
+        return new ArticleSyncResult(data?.Id, data?.Url, data?.Status, wrapper?.Message);
     }
 
     private static async Task<ExtranetApiException> CreateErrorAsync(HttpResponseMessage response, CancellationToken cancellationToken)

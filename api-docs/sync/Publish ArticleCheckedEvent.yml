@@ -1,0 +1,59 @@
+info:
+  name: Publish ArticleCheckedEvent
+  type: http
+  seq: 4
+
+http:
+  method: POST
+  url: "{{rabbitmqBaseUrl}}/api/exchanges/%2F/bolivian-daily.articles/publish"
+  headers:
+    - name: Content-Type
+      value: application/json
+  body:
+    type: json
+    data: |-
+      {
+        "properties": {
+          "content_type": "application/json",
+          "delivery_mode": 2,
+          "type": "ArticleCheckedEvent"
+        },
+        "routing_key": "article.checked",
+        "payload": "{\"scrapedArticleId\":99994,\"checkedArticleId\":999994,\"categoryId\":1,\"sourceId\":1,\"sourceName\":\"Jornada\",\"sourceUrl\":\"https://jornada.com.bo/\",\"url\":\"https://jornada.com.bo/paz-recorta-su-gabinete-a-12-ministerios-para-eliminar-la-burocracia/\",\"categoryName\":\"NACIONAL\",\"pretitle\":null,\"title\":\"Paz recorta su gabinete a 12 ministerios para eliminar la «burocracia»\",\"subtitle\":null,\"lead\":\"El presidente Rodrigo Paz anunció este lunes la reducción de sus ministerios, de catorce a doce, tras la eliminación de las carteras de Planificación del Desarrollo y de Turismo Sostenible, Cultura, Folclore y Gastronomía, para tener un Estado más «eficiente» y acabar con la «burocracia».\",\"body\":\"<p class=\\\"wp-block-paragraph\\\">El mandatario hizo el anuncio tras tomar juramento a los nuevos ministros de Relaciones Exteriores, Héctor Huanca, y de la Presidencia, Fernando Aramayo, además de anunciar que el hasta ahora titular en esa última cartera de Estado, José Luis Lupo, fue propuesto como nuevo embajador de Bolivia ante la Organización de Estados Americanos (OEA).</p>\\n<p class=\\\"wp-block-paragraph\\\">«Recibimos un Gobierno que venía con 21 ministerios (…) Nosotros generamos otra instancia de catorce ministerios y hoy día, reduciendo la burocracia estamos pasando a doce ministerios. O sea que el Gobierno central está dando señales claras de buscar un Estado no ausente, sino presente, eficiente», sostuvo.</p>\\n<p class=\\\"wp-block-paragraph\\\">El gobernante explicó que una parte del Ministerio de Turismo Sostenible, Cultura, Folclore y Gastronomía quedará dentro del Ejecutivo, pero que se creará una «agencia nacional» que permitirá «darle agilidad» al encuentro entre «lo público y privado» y «lo nacional e internacional» para generar un impacto en la economía nacional desde esos sectores.</p>\\n<p class=\\\"wp-block-paragraph\\\">También señaló que el Ministerio de Planificación del Desarrollo será eliminado y que algunas de sus atribuciones serán absorbidas por otras carteras de Estado, en busca de un Estado más eficiente y presente para la ciudadanía.</p>\",\"author\":\"La Jornada\",\"publishedAt\":\"2026-08-03T22:00:00Z\",\"scrapedAt\":\"2026-08-03T22:30:00Z\",\"media\":[],\"checkedAt\":\"2026-08-03T22:45:00Z\"}",
+        "payload_encoding": "string"
+      }
+  auth:
+    type: basic
+    username: guest
+    password: guest
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs: |-
+  Publica un ArticleCheckedEvent directamente al exchange `bolivian-daily.articles`
+  (routing key `article.checked` → cola `sync.article-checked`), sin depender del CheckerWorker.
+
+  - Auth: Basic `guest`/`guest` (Management API de RabbitMQ).
+  - URL usa la variable `{{rabbitmqBaseUrl}}` (definida en los entornos local/staging/production).
+  - Para que Bruno resuelva la variable: seleccionar el entorno (p.ej. "Local") en el selector
+    y, si la variable es nueva, reabrir la coleccion para que la cargue.
+  - Respuesta esperada: `{"routed":true}` → el mensaje llego a la cola del sync.
+  - `checkedArticleId` DEBE ser unico por prueba (indice unico
+    `IX_synced_articles_checked_article_id`; si se repite, el consumer lo ignora por dedupe
+    y, si ya quedo con `status=SYNCED`, `IsSyncedAsync` tambien lo descarta).
+  - Las fechas (`publishedAt`, `scrapedAt`, `checkedAt`) DEBEN ir en UTC con `Z` (mismo formato
+    que publica el checker real). Con offset (p.ej. `-04:00`) System.Text.Json las deserializa
+    como `DateTime` con Kind=Local y Npgsql falla:
+    `Cannot write DateTime with Kind=Local to 'timestamp with time zone'`.
+  - Mismos datos del ejemplo del checker (Debug/Publish ArticleScrapedEvent): articulo real
+    de Jornada (NACIONAL, fila `articles` id 9 de scraper_db, publicada 2026-08-03), `media` vacio.
+  - El sync llama a la API del CMS (Extranet) con `Extranet:Url/Username/Password` del
+    `appsettings.json` del SyncWorker. Si no estan configurados o la llamada falla, se guarda
+    `synced_articles.status = 'FAILED'` y el mensaje va a la DLQ (`sync.article-checked.dead`)
+    tras `MaxRetries` reintentos.
+  - Pipeline completo: publicar primero el `ArticleScrapedEvent` del checker → el Checker valida
+    y publica su `ArticleCheckedEvent` → Sync lo consume y sincroniza con el CMS.

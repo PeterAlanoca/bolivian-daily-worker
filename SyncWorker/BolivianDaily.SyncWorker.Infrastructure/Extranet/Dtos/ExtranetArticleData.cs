@@ -4,7 +4,9 @@ namespace BolivianDaily.SyncWorker.Infrastructure.Extranet.Dtos;
 
 public sealed record ExtranetArticleData(
     [property: JsonPropertyName("id")]
-    string Id,
+    long Id,
+    [property: JsonPropertyName("url")]
+    string? Url,
     [property: JsonPropertyName("status")]
     string? Status
 );

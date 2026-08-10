@@ -5,7 +5,7 @@ info:
 
 http:
   method: POST
-  url: '{{apiBaseUrl}}/api/news/articles'
+  url: "{{apiBaseUrl}}/api/articles"
   headers:
     - name: Content-Type
       value: application/json
@@ -22,7 +22,13 @@ http:
       }
   auth:
     type: bearer
-    token: '{{accessToken}}'
+    token: "{{accessToken}}"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
 
 docs: |-
   POST `{{apiBaseUrl}}/api/news/articles` (requires Bearer Token)
