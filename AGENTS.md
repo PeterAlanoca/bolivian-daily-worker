@@ -76,6 +76,7 @@ See skill `.opencode/skills/rabbitmq-messaging/SKILL.md` for the full workflow (
 - C#: file-scoped namespaces, primary constructors, ImplicitUsings, Nullable enabled.
 - **NO comments unless requested.**
 - Names in English; tables and columns `snake_case`, entities plural.
+- **Variables = camelCase del tipo declarado** (parámetros de ctor/método/extension, fields, `var` locals, colecciones) para tipos del proyecto: `IArticleSyncer` → `articleSyncer`, `SyncDbContext` → `syncDbContext`, `ArticleCheckedEvent` → `articleCheckedEvent`, `IEnumerable<INewsSourceParser>` → `newsSourceParsers`. Tipos de framework conservan su idioma natural: `httpClient`, `logger`, `options` (`IOptions<T>`), `connection`, `channel`, `serviceProvider`, `scope`, `ct`/`stoppingToken`.
 - Repositories: `Sql*Repository` in Infrastructure; one `DbContext` per worker; snake_case mapping in `OnModelCreating`.
 - **Mappers**: static extension classes in `Application/Mappers/` (`ArticleMappers`, `CheckedArticleMappers`, `SyncedArticleMappers`) — use cases never build entities inline; they call the mapper.
 - Host projects reference `Microsoft.EntityFrameworkCore.Design` (needed by `dotnet ef`).

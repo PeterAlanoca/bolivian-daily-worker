@@ -13,14 +13,14 @@ public sealed class CheckerConsumer(
 
     protected override string RoutingKey => Options.Value.ArticleScrapedRoutingKey;
 
-    protected override async Task HandleAsync(ArticleScrapedEvent message, CancellationToken stoppingToken)
+    protected override async Task HandleAsync(ArticleScrapedEvent articleScrapedEvent, CancellationToken stoppingToken)
     {
-        Logger.LogInformation("Checking scraped article {ArticleId} ({Title}) from {SourceName}", message.ArticleId, message.Title, message.SourceName);
+        Logger.LogInformation("Checking scraped article {ArticleId} ({Title}) from {SourceName}", articleScrapedEvent.ArticleId, articleScrapedEvent.Title, articleScrapedEvent.SourceName);
 
         using var scope = ServiceProvider.CreateScope();
-        var useCase = scope.ServiceProvider.GetRequiredService<CheckScrapedArticleUseCase>();
-        await useCase.ExecuteAsync(message, stoppingToken);
+        var checkScrapedArticleUseCase = scope.ServiceProvider.GetRequiredService<CheckScrapedArticleUseCase>();
+        await checkScrapedArticleUseCase.ExecuteAsync(articleScrapedEvent, stoppingToken);
 
-        Logger.LogInformation("Article {ArticleId} checked and acked", message.ArticleId);
+        Logger.LogInformation("Article {ArticleId} checked and acked", articleScrapedEvent.ArticleId);
     }
 }

@@ -6,5 +6,5 @@ public interface ICheckedArticleRepository
 {
     Task<bool> ExistsForScrapedArticleAsync(long scrapedArticleId, CancellationToken cancellationToken = default);
 
-    Task AddAsync(CheckedArticle article, CancellationToken cancellationToken = default);
+    Task AddAsync(CheckedArticle checkedArticle, CancellationToken cancellationToken = default);
 }

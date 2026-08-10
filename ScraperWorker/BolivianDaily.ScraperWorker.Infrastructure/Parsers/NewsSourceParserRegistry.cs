@@ -2,15 +2,15 @@ using BolivianDaily.ScraperWorker.Application.Interfaces;
 
 namespace BolivianDaily.ScraperWorker.Infrastructure.Parsers;
 
-public class NewsSourceParserRegistry(IEnumerable<INewsSourceParser> parsers) : INewsSourceParserRegistry
+public class NewsSourceParserRegistry(IEnumerable<INewsSourceParser> newsSourceParsers) : INewsSourceParserRegistry
 {
-    private readonly IReadOnlyDictionary<string, INewsSourceParser> _parsers = parsers.ToDictionary(parser => parser.SourceAlias, StringComparer.OrdinalIgnoreCase);
+    private readonly IReadOnlyDictionary<string, INewsSourceParser> _newsSourceParsers = newsSourceParsers.ToDictionary(parser => parser.SourceAlias, StringComparer.OrdinalIgnoreCase);
 
-    public bool HasParserFor(string sourceAlias) => _parsers.ContainsKey(sourceAlias);
+    public bool HasParserFor(string sourceAlias) => _newsSourceParsers.ContainsKey(sourceAlias);
 
     public INewsSourceParser GetFor(string sourceAlias)
     {
-        if (_parsers.TryGetValue(sourceAlias, out var parser))
+        if (_newsSourceParsers.TryGetValue(sourceAlias, out var parser))
         {
             return parser;
         }

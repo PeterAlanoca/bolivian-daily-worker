@@ -6,43 +6,43 @@ using BolivianDaily.ScraperWorker.Application.Mappers;
 namespace BolivianDaily.ScraperWorker.Application.UseCases.ScrapeSource;
 
 public class ScrapeSourceUseCase(
-    INewsSourceRepository sourceRepository,
+    INewsSourceRepository newsSourceRepository,
     IArticleRepository articleRepository,
-    INewsSourceParserRegistry parserRegistry,
-    IArticleScrapedEventPublisher eventPublisher,
+    INewsSourceParserRegistry newsSourceParserRegistry,
+    IArticleScrapedEventPublisher articleScrapedEventPublisher,
     ILogger<ScrapeSourceUseCase> logger)
 {
 
-    public async Task<ScrapeSourceResult> ExecuteAsync(ScrapeSourceCommand command, CancellationToken cancellationToken = default)
+    public async Task<ScrapeSourceResult> ExecuteAsync(ScrapeSourceCommand scrapeSourceCommand, CancellationToken cancellationToken = default)
     {
-        var source = await sourceRepository.GetActiveByAliasAsync(command.SourceAlias, cancellationToken);
-        if (source is null)
+        var newsSource = await newsSourceRepository.GetActiveByAliasAsync(scrapeSourceCommand.SourceAlias, cancellationToken);
+        if (newsSource is null)
         {
-            logger.LogWarning("No active source found for alias {SourceAlias}", command.SourceAlias);
-            return new ScrapeSourceResult(command.SourceAlias, 0, 0, 0, 0);
+            logger.LogWarning("No active source found for alias {SourceAlias}", scrapeSourceCommand.SourceAlias);
+            return new ScrapeSourceResult(scrapeSourceCommand.SourceAlias, 0, 0, 0, 0);
         }
 
-        if (!parserRegistry.HasParserFor(source.Alias))
+        if (!newsSourceParserRegistry.HasParserFor(newsSource.Alias))
         {
-            logger.LogWarning("No parser registered for source alias {SourceAlias}", source.Alias);
-            return new ScrapeSourceResult(source.Alias, 0, 0, 0, 0);
+            logger.LogWarning("No parser registered for source alias {SourceAlias}", newsSource.Alias);
+            return new ScrapeSourceResult(newsSource.Alias, 0, 0, 0, 0);
         }
 
-        var parser = parserRegistry.GetFor(source.Alias);
+        var parser = newsSourceParserRegistry.GetFor(newsSource.Alias);
         var categoriesProcessed = 0;
         var urlsFound = 0;
         var scraped = 0;
         var skipped = 0;
 
-        foreach (var sourceCategory in source.Categories)
+        foreach (var sourceCategory in newsSource.Categories)
         {
             if (categoriesProcessed > 0)
             {
-                await Task.Delay(command.CategoryDelayMs, cancellationToken);
+                await Task.Delay(scrapeSourceCommand.CategoryDelayMs, cancellationToken);
             }
 
             categoriesProcessed++;
-            logger.LogInformation("Scraping {Source} category {Category}", source.Name, sourceCategory.Name);
+            logger.LogInformation("Scraping {Source} category {Category}", newsSource.Name, sourceCategory.Name);
 
             var urls = await parser.GetLatestArticleUrlsAsync(sourceCategory, cancellationToken);
             urlsFound += urls.Count;
@@ -56,7 +56,7 @@ public class ScrapeSourceUseCase(
                     continue;
                 }
 
-                await Task.Delay(new Random().Next(command.MinArticleDelayMs, command.MaxArticleDelayMs), cancellationToken);
+                await Task.Delay(new Random().Next(scrapeSourceCommand.MinArticleDelayMs, scrapeSourceCommand.MaxArticleDelayMs), cancellationToken);
 
                 var article = await parser.ParseArticleAsync(url, cancellationToken);
                 if (article is null)
@@ -68,7 +68,7 @@ public class ScrapeSourceUseCase(
                 var category = sourceCategory.Category
                  ?? throw new InvalidOperationException($"Category not loaded for SourceCategory {sourceCategory.Id}");
 
-                article.NewsSourceId = source.Id;
+                article.NewsSourceId = newsSource.Id;
                 article.CategoryId = category.Id;
                 article.SourceCategoryId = sourceCategory.Id;
 
@@ -77,13 +77,13 @@ public class ScrapeSourceUseCase(
 
                 logger.LogInformation("Scraped article: {Title}", article.Title);
 
-                var scrapedEvent = article.AsScrapedEvent(source, category);
-                await eventPublisher.PublishAsync(scrapedEvent, cancellationToken);
+                var articleScrapedEvent = article.AsScrapedEvent(newsSource, category);
+                await articleScrapedEventPublisher.PublishAsync(articleScrapedEvent, cancellationToken);
 
                 logger.LogInformation("Scraped queue article: {Title}", article.Title);
             }
         }
 
-        return new ScrapeSourceResult(source.Alias, categoriesProcessed, urlsFound, scraped, skipped);
+        return new ScrapeSourceResult(newsSource.Alias, categoriesProcessed, urlsFound, scraped, skipped);
     }
 }

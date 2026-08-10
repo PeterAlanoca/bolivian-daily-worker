@@ -15,8 +15,8 @@ var host = builder.Build();
 
 using (var scope = host.Services.CreateScope())
 {
-    var db = scope.ServiceProvider.GetRequiredService<CheckerDbContext>();
-    db.Database.Migrate();
+    var checkerDbContext = scope.ServiceProvider.GetRequiredService<CheckerDbContext>();
+    checkerDbContext.Database.Migrate();
 }
 
 host.Run();

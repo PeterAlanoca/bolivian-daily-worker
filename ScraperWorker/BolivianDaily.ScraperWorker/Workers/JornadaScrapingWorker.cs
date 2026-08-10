@@ -23,9 +23,9 @@ public class JornadaScrapingWorker(
                 logger.LogDebug("Jornada starting synchronization...");
 
                 using var scope = serviceProvider.CreateScope();
-                var useCase = scope.ServiceProvider.GetRequiredService<ScrapeSourceUseCase>();
+                var scrapeSourceUseCase = scope.ServiceProvider.GetRequiredService<ScrapeSourceUseCase>();
 
-                var result = await useCase.ExecuteAsync(
+                var result = await scrapeSourceUseCase.ExecuteAsync(
                     new ScrapeSourceCommand(
                         jornadaOptionsProvider.Alias, 
                         jornadaOptionsProvider.CategoryDelayMs, 

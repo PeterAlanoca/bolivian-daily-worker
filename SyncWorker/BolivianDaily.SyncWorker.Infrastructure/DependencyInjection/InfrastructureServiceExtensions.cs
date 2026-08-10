@@ -26,8 +26,8 @@ public static class InfrastructureServiceExtensions
         services.AddScoped<ISyncedArticleRepository, SyncedArticleRepository>();
         services.AddHttpClient("extranet", (sp, client) =>
         {
-            var opts = sp.GetRequiredService<IOptions<ExtranetOptions>>().Value;
-            client.BaseAddress = new Uri(opts.Url);
+            var extranetOptions = sp.GetRequiredService<IOptions<ExtranetOptions>>().Value;
+            client.BaseAddress = new Uri(extranetOptions.Url);
         });
         services.AddSingleton<ExtranetTokenProvider>(sp =>
             new ExtranetTokenProvider(
@@ -35,27 +35,27 @@ public static class InfrastructureServiceExtensions
                 sp.GetRequiredService<IOptions<ExtranetOptions>>()));
         services.AddHttpClient<IArticleSyncer, ExtranetArticleSyncer>((sp, client) =>
         {
-            var opts = sp.GetRequiredService<IOptions<ExtranetOptions>>().Value;
-            client.BaseAddress = new Uri(opts.Url);
+            var extranetOptions = sp.GetRequiredService<IOptions<ExtranetOptions>>().Value;
+            client.BaseAddress = new Uri(extranetOptions.Url);
         });
 
         services.AddSingleton<ConnectionFactory>(sp =>
         {
-            var opts = sp.GetRequiredService<IOptions<RabbitMqOptions>>().Value;
+            var rabbitMqOptions = sp.GetRequiredService<IOptions<RabbitMqOptions>>().Value;
             return new ConnectionFactory
             {
-                HostName = opts.HostName,
-                Port = opts.Port,
-                UserName = opts.UserName,
-                Password = opts.Password,
+                HostName = rabbitMqOptions.HostName,
+                Port = rabbitMqOptions.Port,
+                UserName = rabbitMqOptions.UserName,
+                Password = rabbitMqOptions.Password,
                 DispatchConsumersAsync = true
             };
         });
 
         services.AddSingleton<IConnection>(sp =>
         {
-            var factory = sp.GetRequiredService<ConnectionFactory>();
-            return factory.CreateConnection();
+            var connectionFactory = sp.GetRequiredService<ConnectionFactory>();
+            return connectionFactory.CreateConnection();
         });
 
         return services;

@@ -4,20 +4,20 @@ namespace BolivianDaily.Shared.Messaging;
 
 public static class RabbitMqTopology
 {
-    public static string ArticleScrapedRoutingKey(RabbitMqOptions options) => options.ArticleScrapedRoutingKey;
+    public static string ArticleScrapedRoutingKey(RabbitMqOptions rabbitMqOptions) => rabbitMqOptions.ArticleScrapedRoutingKey;
 
-    public static string ArticleCheckedRoutingKey(RabbitMqOptions options) => options.ArticleCheckedRoutingKey;
+    public static string ArticleCheckedRoutingKey(RabbitMqOptions rabbitMqOptions) => rabbitMqOptions.ArticleCheckedRoutingKey;
 
-    public static string DeadLetterExchange(RabbitMqOptions options) => $"{options.Exchange}.dlx";
+    public static string DeadLetterExchange(RabbitMqOptions rabbitMqOptions) => $"{rabbitMqOptions.Exchange}.dlx";
 
     public static string DeadLetterQueue(string queueName) => $"{queueName}.dead";
 
-    public static void Declare(IModel channel, RabbitMqOptions options, string queueName, string routingKey)
+    public static void Declare(IModel channel, RabbitMqOptions rabbitMqOptions, string queueName, string routingKey)
     {
-        var deadLetterExchange = DeadLetterExchange(options);
+        var deadLetterExchange = DeadLetterExchange(rabbitMqOptions);
         var deadLetterQueue = DeadLetterQueue(queueName);
 
-        channel.ExchangeDeclare(options.Exchange, ExchangeType.Direct, durable: true);
+        channel.ExchangeDeclare(rabbitMqOptions.Exchange, ExchangeType.Direct, durable: true);
         channel.ExchangeDeclare(deadLetterExchange, ExchangeType.Direct, durable: true);
         channel.QueueDeclare(
             queueName,
@@ -30,7 +30,7 @@ public static class RabbitMqTopology
                 ["x-dead-letter-routing-key"] = deadLetterQueue
             });
         channel.QueueDeclare(deadLetterQueue, durable: true, exclusive: false, autoDelete: false);
-        channel.QueueBind(queueName, options.Exchange, routingKey);
+        channel.QueueBind(queueName, rabbitMqOptions.Exchange, routingKey);
         channel.QueueBind(deadLetterQueue, deadLetterExchange, deadLetterQueue);
     }
 }

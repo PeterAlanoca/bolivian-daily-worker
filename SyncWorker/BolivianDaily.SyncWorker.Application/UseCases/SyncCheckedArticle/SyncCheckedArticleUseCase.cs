@@ -7,38 +7,38 @@ using Microsoft.Extensions.Logging;
 namespace BolivianDaily.SyncWorker.Application.UseCases.SyncCheckedArticle;
 
 public sealed class SyncCheckedArticleUseCase(
-    IArticleSyncer apiClient,
-    ISyncedArticleRepository repository,
+    IArticleSyncer articleSyncer,
+    ISyncedArticleRepository syncedArticleRepository,
     ILogger<SyncCheckedArticleUseCase> logger)
 {
-    public async Task ExecuteAsync(ArticleCheckedEvent message, CancellationToken cancellationToken = default)
+    public async Task ExecuteAsync(ArticleCheckedEvent articleCheckedEvent, CancellationToken cancellationToken = default)
     {
-        if (await repository.IsSyncedAsync(message.CheckedArticleId, cancellationToken))
+        if (await syncedArticleRepository.IsSyncedAsync(articleCheckedEvent.CheckedArticleId, cancellationToken))
         {
-            logger.LogInformation("Checked article {CheckedArticleId} was already synced", message.CheckedArticleId);
+            logger.LogInformation("Checked article {CheckedArticleId} was already synced", articleCheckedEvent.CheckedArticleId);
             return;
         }
 
-        var syncedArticle = message.ToSyncedArticle();
+        var syncedArticle = articleCheckedEvent.ToSyncedArticle();
 
         try
         {
-            var result = await apiClient.SyncAsync(message, cancellationToken);
-            syncedArticle.ExtranetId = result.Id;
-            syncedArticle.ExtranetUrl = result.Url;
-            syncedArticle.Status = result.Status ?? "SYNCED";
-            syncedArticle.Details = result.Message;
+            var articleSyncResult = await articleSyncer.SyncAsync(articleCheckedEvent, cancellationToken);
+            syncedArticle.ExtranetId = articleSyncResult.Id;
+            syncedArticle.ExtranetUrl = articleSyncResult.Url;
+            syncedArticle.Status = articleSyncResult.Status ?? "SYNCED";
+            syncedArticle.Details = articleSyncResult.Message;
             syncedArticle.SyncedAt = DateTime.UtcNow;
         }
         catch (Exception ex)
         {
             syncedArticle.Status = "FAILED";
             syncedArticle.Details = ex.Message;
-            await repository.AddAsync(syncedArticle, cancellationToken);
+            await syncedArticleRepository.AddAsync(syncedArticle, cancellationToken);
             throw;
         }
 
-        await repository.AddAsync(syncedArticle, cancellationToken);
-        logger.LogInformation("Synced checked article {CheckedArticleId}", message.CheckedArticleId);
+        await syncedArticleRepository.AddAsync(syncedArticle, cancellationToken);
+        logger.LogInformation("Synced checked article {CheckedArticleId}", articleCheckedEvent.CheckedArticleId);
     }
 }

@@ -5,30 +5,30 @@ namespace BolivianDaily.CheckerWorker.Application.Mappers;
 
 public static class CheckedArticleMappers
 {
-    public static ArticleCheckedEvent ToCheckedEvent(this CheckedArticle article)
+    public static ArticleCheckedEvent ToCheckedEvent(this CheckedArticle checkedArticle)
     {
         return new ArticleCheckedEvent(
-            ScrapedArticleId: article.ScrapedArticleId,
-            CheckedArticleId: article.Id,
-            CategoryId: article.CategoryId,
-            SourceId: article.SourceId,
-            SourceName: article.SourceName,
-            SourceUrl: article.SourceUrl,
-            Url: article.Url,
-            CategoryName: article.CategoryName,
-            Title: article.Title,
-            Pretitle: article.Pretitle,
-            Subtitle: article.Subtitle,
-            Lead: article.Lead,
-            Body: article.Body,
-            Author: article.Author,
-            PublishedAt: article.PublishedAt,
-            ScrapedAt: article.ScrapedAt,
-            Media: [.. article.Media.Select(media => new ArticleMediaMessage(
+            ScrapedArticleId: checkedArticle.ScrapedArticleId,
+            CheckedArticleId: checkedArticle.Id,
+            CategoryId: checkedArticle.CategoryId,
+            SourceId: checkedArticle.SourceId,
+            SourceName: checkedArticle.SourceName,
+            SourceUrl: checkedArticle.SourceUrl,
+            Url: checkedArticle.Url,
+            CategoryName: checkedArticle.CategoryName,
+            Title: checkedArticle.Title,
+            Pretitle: checkedArticle.Pretitle,
+            Subtitle: checkedArticle.Subtitle,
+            Lead: checkedArticle.Lead,
+            Body: checkedArticle.Body,
+            Author: checkedArticle.Author,
+            PublishedAt: checkedArticle.PublishedAt,
+            ScrapedAt: checkedArticle.ScrapedAt,
+            Media: [.. checkedArticle.Media.Select(media => new ArticleMediaMessage(
                 media.Url,
                 media.Type,
                 media.Description,
                 media.Path))],
-            CheckedAt: article.CheckedAt);
+            CheckedAt: checkedArticle.CheckedAt);
     }
 }

@@ -10,27 +10,27 @@ namespace BolivianDaily.SyncWorker.Infrastructure.Extranet;
 
 public sealed class ExtranetArticleSyncer(HttpClient httpClient, ExtranetTokenProvider tokenProvider) : IArticleSyncer
 {
-    public async Task<ArticleSyncResult> SyncAsync(ArticleCheckedEvent message, CancellationToken cancellationToken = default)
+    public async Task<ArticleSyncResult> SyncAsync(ArticleCheckedEvent articleCheckedEvent, CancellationToken cancellationToken = default)
     {
         var token = await tokenProvider.GetTokenAsync(cancellationToken);
-        using var response = await PostArticleAsync(message, token, cancellationToken);
+        using var response = await PostArticleAsync(articleCheckedEvent, token, cancellationToken);
 
         if (response.StatusCode == HttpStatusCode.Unauthorized)
         {
             tokenProvider.Invalidate();
             token = await tokenProvider.GetTokenAsync(cancellationToken);
-            using var retry = await PostArticleAsync(message, token, cancellationToken);
+            using var retry = await PostArticleAsync(articleCheckedEvent, token, cancellationToken);
             return await ParseArticleAsync(retry, cancellationToken);
         }
 
         return await ParseArticleAsync(response, cancellationToken);
     }
 
-    private async Task<HttpResponseMessage> PostArticleAsync(ArticleCheckedEvent message, string token, CancellationToken cancellationToken)
+    private async Task<HttpResponseMessage> PostArticleAsync(ArticleCheckedEvent articleCheckedEvent, string token, CancellationToken cancellationToken)
     {
         var request = new HttpRequestMessage(HttpMethod.Post, "api/articles")
         {
-            Content = JsonContent.Create(message.ToExtranetArticleRequest())
+            Content = JsonContent.Create(articleCheckedEvent.ToExtranetArticleRequest())
         };
         request.Headers.Authorization = new("Bearer", token);
 

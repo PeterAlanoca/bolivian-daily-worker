@@ -4,18 +4,18 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BolivianDaily.SyncWorker.Infrastructure.Persistence;
 
-public sealed class SyncedArticleRepository(SyncDbContext context) : ISyncedArticleRepository
+public sealed class SyncedArticleRepository(SyncDbContext syncDbContext) : ISyncedArticleRepository
 {
     public Task<bool> IsSyncedAsync(long checkedArticleId, CancellationToken cancellationToken = default)
     {
-        return context.SyncedArticles.AnyAsync(
-            article => article.CheckedArticleId == checkedArticleId && article.Status == "SYNCED",
+        return syncDbContext.SyncedArticles.AnyAsync(
+            syncedArticle => syncedArticle.CheckedArticleId == checkedArticleId && syncedArticle.Status == "SYNCED",
             cancellationToken);
     }
 
     public async Task AddAsync(SyncedArticle syncedArticle, CancellationToken cancellationToken = default)
     {
-        await context.SyncedArticles.AddAsync(syncedArticle, cancellationToken);
-        await context.SaveChangesAsync(cancellationToken);
+        await syncDbContext.SyncedArticles.AddAsync(syncedArticle, cancellationToken);
+        await syncDbContext.SaveChangesAsync(cancellationToken);
     }
 }

@@ -16,8 +16,8 @@ var host = builder.Build();
 
 using (var scope = host.Services.CreateScope())
 {
-    var db = scope.ServiceProvider.GetRequiredService<ScraperDbContext>();
-    db.Database.Migrate();
+    var scraperDbContext = scope.ServiceProvider.GetRequiredService<ScraperDbContext>();
+    scraperDbContext.Database.Migrate();
 }
 
 host.Run();

@@ -25,8 +25,8 @@ var host = builder.Build();
 
 using (var scope = host.Services.CreateScope())
 {
-    var db = scope.ServiceProvider.GetRequiredService<SyncDbContext>();
-    db.Database.Migrate();
+    var syncDbContext = scope.ServiceProvider.GetRequiredService<SyncDbContext>();
+    syncDbContext.Database.Migrate();
 }
 
 host.Run();

@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BolivianDaily.ScraperWorker.Infrastructure.Persistence;
 
-public class SqlNewsSourceRepository(ScraperDbContext context) : INewsSourceRepository
+public class SqlNewsSourceRepository(ScraperDbContext scraperDbContext) : INewsSourceRepository
 {
     public async Task<NewsSource?> GetActiveByAliasAsync(string alias, CancellationToken cancellationToken = default)
     {
-        return await context.NewsSources
+        return await scraperDbContext.NewsSources
             .Include(s => s.Categories.Where(c => c.State == "A"))
             .ThenInclude(c => c.Category)
             .FirstOrDefaultAsync(
